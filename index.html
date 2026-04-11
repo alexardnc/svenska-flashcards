@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Svenska · Kapitel 7</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── THEME TOKENS ── */
+:root {
+  --bg:          #F4EDE0;
+  --bg2:         #EDE4D3;
+  --card-bg:     #FFFCF5;
+  --card-bg2:    #F9F3E6;
+  --text:        #1C1710;
+  --text2:       #3A3020;
+  --subtext:     #7A6A55;
+  --border:      #DDD0B8;
+  --header-bg:   #1C1710;
+  --header-text: #F4EDE0;
+  --shadow:      0 6px 32px rgba(28,23,16,0.13);
+  --shadow-hover:0 10px 48px rgba(28,23,16,0.20);
+  --mastery-bar: #2A8C56;
+  --progress-bg: #DDD0B8;
+  /* word-type accent colors — stay vivid in both modes */
+  --c-noun-en:   #2065B8;
+  --c-noun-ett:  #1F8A4A;
+  --c-adjective: #B8720A;
+  --c-verb:      #C03018;
+  --c-phrase:    #5E35B1;
+  --c-grammar:   #007D82;
+  /* rating pill colors */
+  --r1: #C03018;
+  --r2: #C96010;
+  --r3: #A88500;
+  --r4: #1F8A4A;
+  --r5: #2065B8;
+  /* blobs */
+  --blob1: #D4925A;
+  --blob2: #7FB89A;
+  --blob3: #9B7FD4;
+}
+
+[data-theme="dark"] {
+  --bg:          #18130C;
+  --bg2:         #1F1810;
+  --card-bg:     #272015;
+  --card-bg2:    #2E2718;
+  --text:        #EDE4D0;
+  --text2:       #C8BBAA;
+  --subtext:     #8C7C68;
+  --border:      #3A3020;
+  --header-bg:   #0E0C08;
+  --header-text: #EDE4D0;
+  --shadow:      0 6px 32px rgba(0,0,0,0.45);
+  --shadow-hover:0 10px 48px rgba(0,0,0,0.60);
+  --mastery-bar: #2DA863;
+  --progress-bg: #3A3020;
+  --blob1: #7A4020;
+  --blob2: #1A5030;
+  --blob3: #3A2060;
+}
+
+/* ── BASE ── */
+html { font-size: 18px; }
+html, body {
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* ── ORGANIC BLOB BACKGROUND ── */
+.blobs {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(72px);
+  opacity: 0.13;
+  transition: background 0.4s;
+}
+[data-theme="dark"] .blob { opacity: 0.10; }
+.blob-1 { width: 420px; height: 380px; background: var(--blob1); top: -120px; left: -100px; }
+.blob-2 { width: 360px; height: 400px; background: var(--blob2); bottom: -80px; right: -80px; }
+.blob-3 { width: 280px; height: 260px; background: var(--blob3); top: 40%; left: 60%; }
+
+
+/* ── HEADER ── */
+header {
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--header-bg);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: background 0.3s;
+}
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.header-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--header-text);
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+.header-title span { color: #FF9F6A; }
+.mastery-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: white;
+  background: var(--mastery-bar);
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.02em;
+  transition: background 0.3s;
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dark-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  color: var(--header-text);
+  font-size: 1.1rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.75;
+  transition: opacity 0.15s, background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.dark-toggle:hover { opacity: 1; background: rgba(255,255,255,0.10); }
+.dark-toggle .icon-moon { display: block; }
+.dark-toggle .icon-sun  { display: none; }
+[data-theme="dark"] .dark-toggle .icon-moon { display: none; }
+[data-theme="dark"] .dark-toggle .icon-sun  { display: block; }
+
+/* ── MAIN ── */
+main {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 18px 14px 130px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ── PROGRESS ── */
+.progress-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.progress-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: var(--progress-bg);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #FF9F6A, #E05A35);
+  border-radius: 6px;
+  transition: width 0.35s ease;
+}
+.progress-label {
+  font-size: 0.72rem;
+  color: var(--subtext);
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+/* ── FILTER TABS ── */
+.filter-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.filter-group-label {
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: var(--subtext);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding-left: 2px;
+}
+.filter-tabs {
+  width: 100%;
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.filter-tab {
+  font-size: 0.77rem;
+  font-weight: 700;
+  padding: 6px 13px;
+  border-radius: 20px;
+  border: 2px solid var(--border);
+  background: transparent;
+  color: var(--subtext);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'Inter', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.filter-tab:hover { border-color: var(--subtext); }
+
+/* Group filters */
+.filter-tab.active[data-group="all"]      { background: #E05A35; border-color: #E05A35; color: white; }
+.filter-tab.active[data-group="chapter"]  { background: #B8720A; border-color: #B8720A; color: white; }
+.filter-tab.active[data-group="other"]    { background: #5E35B1; border-color: #5E35B1; color: white; }
+/* Type filters */
+.filter-tab.active[data-type="noun_en"]   { background: var(--c-noun-en);  border-color: var(--c-noun-en);  color: white; }
+.filter-tab.active[data-type="noun_ett"]  { background: var(--c-noun-ett); border-color: var(--c-noun-ett); color: white; }
+.filter-tab.active[data-type="adjective"] { background: var(--c-adjective);border-color: var(--c-adjective);color: white; }
+.filter-tab.active[data-type="verb"]      { background: var(--c-verb);     border-color: var(--c-verb);     color: white; }
+.filter-tab.active[data-type="phrase"]    { background: var(--c-phrase);   border-color: var(--c-phrase);   color: white; }
+.filter-tab.active[data-type="grammar"]   { background: var(--c-grammar);  border-color: var(--c-grammar);  color: white; }
+
+/* ── FLASHCARD ── */
+.card-wrap {
+  width: 100%;
+  perspective: 1200px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.card-inner {
+  display: grid;
+  grid-template-areas: "card";
+  width: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.42s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 22px;
+}
+.card-wrap.flipped .card-inner { transform: rotateY(180deg); }
+.card-face {
+  grid-area: card;
+  position: relative;
+  min-height: 280px;
+  border-radius: 22px;
+  background: var(--card-bg);
+  box-shadow: var(--shadow);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+.card-wrap:hover .card-face { box-shadow: var(--shadow-hover); }
+.card-back { transform: rotateY(180deg); }
+
+/* Colored left accent bar (replaced top stripe) */
+.card-accent-bar {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 5px;
+  border-radius: 22px 0 0 22px;
+}
+
+.card-body {
+  padding: 20px 22px 22px 26px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* ── FRONT ── */
+.card-type-badge {
+  align-self: flex-start;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 8px;
+  margin-bottom: 14px;
+  color: white;
+  flex-shrink: 0;
+}
+.card-group-badge {
+  align-self: flex-start;
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  background: var(--border);
+  color: var(--subtext);
+  flex-shrink: 0;
+}
+.card-emoji {
+  font-size: 3.2rem;
+  line-height: 1;
+  margin-bottom: 12px;
+}
+.card-front-prompt {
+  font-family: 'Fraunces', serif;
+  font-size: 2.05rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--text);
+  flex: 1;
+}
+.card-tap-hint {
+  margin-top: 16px;
+  font-size: 0.78rem;
+  color: var(--subtext);
+  font-weight: 500;
+  opacity: 0.7;
+}
+
+/* ── BACK ── */
+.back-en-header {
+  font-size: 0.82rem;
+  font-weight: 700;
+  opacity: 0.85;
+  margin-bottom: 8px;
+  letter-spacing: 0.03em;
+}
+.card-back-primary {
+  font-family: 'Fraunces', serif;
+  font-size: 2.6rem;
+  font-weight: 900;
+  margin-bottom: 2px;
+  line-height: 1.1;
+}
+.plural-group-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--subtext);
+  margin-bottom: 10px;
+  letter-spacing: 0.03em;
+  opacity: 0.8;
+}
+
+/* Forms table — colored values */
+.card-forms-table {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 12px 0;
+}
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.form-cell-label {
+  font-weight: 700;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  padding: 7px 10px;
+  min-width: 110px;
+  flex-shrink: 0;
+  color: white;
+  opacity: 0.9;
+}
+.form-cell-value {
+  font-weight: 800;
+  font-size: 1.05rem;
+  padding: 7px 12px;
+  color: white;
+  flex: 1;
+  font-family: 'Fraunces', serif;
+}
+
+.card-note {
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin: 8px 0 4px;
+  padding: 7px 11px;
+  border-radius: 9px;
+  border-left: 3px solid;
+  line-height: 1.5;
+}
+.card-example {
+  margin-top: 12px;
+  font-size: 0.92rem;
+  font-style: italic;
+  color: var(--subtext);
+  line-height: 1.6;
+}
+.card-example b {
+  font-style: normal;
+  color: var(--text2);
+  font-weight: 600;
+}
+.card-source {
+  margin-top: 10px;
+  font-size: 0.6rem;
+  color: var(--border);
+  align-self: flex-end;
+}
+.card-flip-back-hint {
+  margin-top: 8px;
+  font-size: 0.64rem;
+  color: var(--subtext);
+  opacity: 0.6;
+  font-weight: 500;
+}
+
+/* Grammar table */
+.grammar-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.77rem;
+  margin: 8px 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.grammar-table td {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  transition: border-color 0.3s;
+}
+.grammar-table tr:first-child td {
+  font-weight: 700;
+  background: var(--card-bg2);
+  transition: background 0.3s;
+}
+
+/* ── RATING SECTION ── */
+/* Rating inside the card */
+.card-rating {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  padding: 14px 0 4px;
+  margin-top: 12px;
+  border-top: 2px solid var(--border);
+}
+.card-rating.visible { display: flex; }
+.rating-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--subtext);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.rating-buttons {
+  display: flex;
+  gap: 7px;
+  justify-content: center;
+}
+/* Minimal pill-style rating buttons with personality */
+.rating-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2.5px solid;
+  cursor: pointer;
+  font-family: 'Fraunces', serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  transition: transform 0.12s, box-shadow 0.12s, background 0.12s;
+  -webkit-tap-highlight-color: transparent;
+  background: transparent;
+}
+.rating-btn .btn-num {
+  font-size: 1.45rem;
+  font-weight: 900;
+  line-height: 1;
+}
+.rating-btn .btn-word {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.5rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.75;
+  margin-top: 1px;
+}
+.rating-btn[data-r="1"] { border-color: var(--r1); color: var(--r1); }
+.rating-btn[data-r="2"] { border-color: var(--r2); color: var(--r2); }
+.rating-btn[data-r="3"] { border-color: var(--r3); color: var(--r3); }
+.rating-btn[data-r="4"] { border-color: var(--r4); color: var(--r4); }
+.rating-btn[data-r="5"] { border-color: var(--r5); color: var(--r5); }
+.rating-btn[data-r="1"]:hover, .rating-btn[data-r="1"]:active { background: var(--r1); color: white; box-shadow: 0 3px 12px rgba(192,48,24,0.35); }
+.rating-btn[data-r="2"]:hover, .rating-btn[data-r="2"]:active { background: var(--r2); color: white; box-shadow: 0 3px 12px rgba(201,96,16,0.35); }
+.rating-btn[data-r="3"]:hover, .rating-btn[data-r="3"]:active { background: var(--r3); color: white; box-shadow: 0 3px 12px rgba(168,133,0,0.35); }
+.rating-btn[data-r="4"]:hover, .rating-btn[data-r="4"]:active { background: var(--r4); color: white; box-shadow: 0 3px 12px rgba(31,138,74,0.35); }
+.rating-btn[data-r="5"]:hover, .rating-btn[data-r="5"]:active { background: var(--r5); color: white; box-shadow: 0 3px 12px rgba(32,101,184,0.35); }
+.rating-btn:active { transform: scale(0.92); }
+
+/* ── CELEBRATION ── */
+#celebration {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  padding: 40px 20px;
+}
+#celebration.visible { display: flex; }
+#celebration .big-emoji { font-size: 5rem; }
+#celebration h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--text);
+}
+#celebration p { color: var(--subtext); font-size: 0.9rem; line-height: 1.6; }
+.restart-btn {
+  padding: 13px 30px;
+  background: #E05A35;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-family: 'Fraunces', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: opacity 0.15s, transform 0.12s;
+  -webkit-tap-highlight-color: transparent;
+}
+.restart-btn:hover { opacity: 0.88; }
+.restart-btn:active { transform: scale(0.96); }
+
+
+/* ── SPEAK / AUDIO BUTTONS ── */
+.speak-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.speak-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background: none;
+  border: 2px solid var(--border);
+  border-radius: 50px;
+  color: var(--subtext);
+  cursor: pointer;
+  padding: 5px 12px;
+  font-size: 0.72rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+}
+.speak-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+.speak-btn:hover, .speak-btn:active {
+  border-color: currentColor;
+  color: var(--text);
+}
+.speak-btn.speaking {
+  background: var(--text);
+  color: var(--card-bg);
+  border-color: var(--text);
+}
+.speak-example-btn {
+  margin-top: 10px;
+}
+
+/* ── CARD DECORATIVE BG MARK ── */
+.card-deco {
+  position: absolute;
+  right: -10px;
+  bottom: -10px;
+  font-family: 'Fraunces', serif;
+  font-weight: 900;
+  font-size: 7.5rem;
+  line-height: 1;
+  opacity: 0.055;
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: -0.05em;
+  transition: color 0.2s;
+}
+[data-theme="dark"] .card-deco { opacity: 0.04; }
+
+/* ── PRINT DIVIDER ── */
+.print-rule {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 2px 0 4px;
+}
+.print-rule::before, .print-rule::after {
+  content: '';
+  flex: 1;
+  height: 2px;
+  background: var(--border);
+  border-radius: 2px;
+}
+.print-rule-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+/* Responsive updates */
+@media (max-width: 360px) {
+  .card-front-prompt  { font-size: 1.6rem; }
+  .card-back-primary  { font-size: 2rem; }
+  .card-emoji         { font-size: 2.8rem; }
+  .rating-btn         { width: 44px; height: 44px; }
+  .rating-btn .btn-num { font-size: 1.2rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Organic blobs -->
+<div class="blobs" aria-hidden="true">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+</div>
+
+<header>
+  <div class="header-left">
+    <div class="header-title">Svenska · <span>Kapitel 7</span></div>
+    <div class="mastery-badge" id="masteryPct">0%</div>
+  </div>
+  <div class="header-right">
+    <button class="dark-toggle" id="darkToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+      <span class="icon-moon">🌙</span>
+      <span class="icon-sun">☀️</span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <div class="progress-row">
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
+    </div>
+    <div class="progress-label" id="progressLabel">– / –</div>
+  </div>
+
+  <!-- Group filters -->
+  <div class="filter-section">
+    <div class="filter-group-label">Show</div>
+    <div class="filter-tabs" id="groupTabs">
+      <button class="filter-tab active" data-group="all">All</button>
+      <button class="filter-tab" data-group="chapter">Chapter vocab</button>
+      <button class="filter-tab" data-group="other">Other words</button>
+    </div>
+    <!-- Type filters -->
+    <div class="filter-group-label" style="margin-top:4px">By type</div>
+    <div class="filter-tabs" id="typeTabs">
+      <button class="filter-tab active" data-type="all">All types</button>
+      <button class="filter-tab" data-type="noun_en">en-words</button>
+      <button class="filter-tab" data-type="noun_ett">ett-words</button>
+      <button class="filter-tab" data-type="adjective">Adjectives</button>
+      <button class="filter-tab" data-type="verb">Verbs</button>
+      <button class="filter-tab" data-type="phrase">Phrases</button>
+      <button class="filter-tab" data-type="grammar">Grammar</button>
+    </div>
+  </div>
+
+  <div class="card-wrap" id="cardWrap" onclick="handleCardClick()">
+    <div class="card-inner" id="cardInner">
+      <!-- FRONT -->
+      <div class="card-face card-front" id="cardFront">
+        <div class="card-accent-bar" id="frontBar"></div>
+        <div class="card-body">
+          <div class="card-type-badge" id="frontBadge"></div>
+          <div class="card-emoji" id="cardEmoji"></div>
+          <div class="card-front-prompt" id="cardPrompt"></div>
+          <div class="card-tap-hint">tap to reveal answer</div>
+        </div>
+      </div>
+      <!-- BACK -->
+      <div class="card-face card-back" id="cardBack">
+        <div class="card-accent-bar" id="backBar"></div>
+        <div class="card-body">
+          <div class="back-en-header" id="backEnHeader"></div>
+          <div class="speak-row">
+            <div class="card-back-primary" id="backPrimary"></div>
+            <button class="speak-btn" id="speakWord" aria-label="Hear Swedish pronunciation">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+              word
+            </button>
+          </div>
+          <div class="plural-group-tag" id="backPluralGroup"></div>
+          <div id="backForms"></div>
+          <div class="card-note" id="backNote" style="display:none"></div>
+          <div class="card-example" id="backExample"></div>
+          <button class="speak-btn speak-example-btn" id="speakExample" aria-label="Hear example sentence" style="display:none">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            example sentence
+          </button>
+          <div class="card-deco" id="cardDeco"></div>
+          <div class="card-source" id="backSource"></div>
+          <!-- Rating — lives inside the card back -->
+          <div class="card-rating" id="cardRating" onclick="event.stopPropagation()">
+            <div class="rating-label">How well did you know it?</div>
+            <div class="rating-buttons">
+              <button class="rating-btn" data-r="1" onclick="rateCard(1)">
+                <span class="btn-num">1</span>
+                <span class="btn-word">nope</span>
+              </button>
+              <button class="rating-btn" data-r="2" onclick="rateCard(2)">
+                <span class="btn-num">2</span>
+                <span class="btn-word">okay</span>
+              </button>
+              <button class="rating-btn" data-r="3" onclick="rateCard(3)">
+                <span class="btn-num">3</span>
+                <span class="btn-word">good</span>
+              </button>
+              <button class="rating-btn" data-r="4" onclick="rateCard(4)">
+                <span class="btn-num">4</span>
+                <span class="btn-word">great</span>
+              </button>
+              <button class="rating-btn" data-r="5" onclick="rateCard(5)">
+                <span class="btn-num">5</span>
+                <span class="btn-word">got it</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Celebration -->
+  <div id="celebration">
+    <div class="big-emoji">🎉</div>
+    <h2>Round done!</h2>
+    <p>Ratings saved — cards you struggled with will appear more often next round.</p>
+    <button class="restart-btn" onclick="startNewRound()">Keep going →</button>
+  </div>
+</main>
+
+<script>
+// ── DATA ────────────────────────────────────────────────────────────────────
+const CARDS_RAW = [{"id": "ch7-001", "type": "noun_en", "subcategory": "bedroom", "emoji": "🛏️", "front": "a bed", "back": {"primary": "en säng", "forms": ["en säng", "sängen", "sängar", "sängarna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 2 (-ar)", "note": "", "example": "Vi måste köpa en ny säng.", "example_translation": "We need to buy a new bed."}, "source": "TB p.77", "rating": 0, "group": "chapter"}, {"id": "ch7-002", "type": "noun_en", "subcategory": "bedroom", "emoji": "🛌", "front": "a mattress", "back": {"primary": "en madrass", "forms": ["en madrass", "madrassen", "madrasser", "madrasserna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 3 (-er)", "note": "", "example": "Madrassen är lite hård för mig.", "example_translation": "The mattress is a bit hard for me."}, "source": "TB p.77–78", "rating": 0, "group": "chapter"}, {"id": "ch7-003", "type": "noun_en", "subcategory": "bedroom", "emoji": "🪨", "front": "a pillow / cushion", "back": {"primary": "en kudde", "forms": ["en kudde", "kudden", "kuddar", "kuddarna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 2 (-ar)", "note": "", "example": "Har ni några mjukare kuddar?", "example_translation": "Do you have any softer pillows?"}, "source": "TB p.77", "rating": 0, "group": "chapter"}, {"id": "ch7-004", "type": "noun_ett", "subcategory": "bedroom", "emoji": "🛏️", "front": "a (bed) sheet", "back": {"primary": "ett lakan", "forms": ["ett lakan", "lakanet", "lakan", "lakanen"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 5 (no ending — same as singular!)", "note": "⚠️ Plural looks the same as singular: lakan → lakan", "example": "Lakanen är av egyptisk bomull.", "example_translation": "The sheets are made of Egyptian cotton."}, "source": "TB p.77–78", "rating": 0, "group": "chapter"}, {"id": "ch7-005", "type": "noun_ett", "subcategory": "bedroom", "emoji": "🛏️", "front": "a duvet / comforter", "back": {"primary": "ett duntäcke", "forms": ["ett duntäcke", "duntäcket", "duntäcken", "duntäckena"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 4 (-n)", "note": "dun = down feathers. täcke = cover/blanket", "example": "Duntäcket ingår utan extra kostnad.", "example_translation": "The duvet is included at no extra cost."}, "source": "TB p.77–78", "rating": 0, "group": "chapter"}, {"id": "ch7-006", "type": "noun_en", "subcategory": "bedroom", "emoji": "🪔", "front": "a bedside lamp", "back": {"primary": "en sänglampa", "forms": ["en sänglampa", "sänglampan", "sänglampor", "sänglamporna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 1 (-or)", "note": "Compound: säng (bed) + lampa (lamp)", "example": "Ska vi ta en sänglampa också?", "example_translation": "Should we get a bedside lamp too?"}, "source": "TB p.77", "rating": 0, "group": "chapter"}, {"id": "ch7-007", "type": "noun_en", "subcategory": "kitchen", "emoji": "🍲", "front": "a saucepan / pot", "back": {"primary": "en kastrull", "forms": ["en kastrull", "kastrullen", "kastruller", "kastrullerna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 3 (-er)", "note": "", "example": "Vi behöver en stor kastrull för pasta.", "example_translation": "We need a big pot for pasta."}, "source": "TB p.77, 79", "rating": 0, "group": "chapter"}, {"id": "ch7-008", "type": "noun_ett", "subcategory": "kitchen", "emoji": "🥛", "front": "a glass / tumbler", "back": {"primary": "ett glas", "forms": ["ett glas", "glaset", "glas", "glasen"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 5 (no ending — same as singular!)", "note": "⚠️ Plural looks the same: glas → glas", "example": "Hur många glas ska vi köpa?", "example_translation": "How many glasses should we buy?"}, "source": "TB p.77, 79", "rating": 0, "group": "chapter"}, {"id": "ch7-009", "type": "noun_en", "subcategory": "kitchen", "emoji": "🫕", "front": "a casserole pot / stew pot", "back": {"primary": "en gryta", "forms": ["en gryta", "grytan", "grytor", "grytorna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 1 (-or)", "note": "Also means the food dish: a stew / casserole", "example": "Titta på de här grytorna! Perfekt när vi lagar köttfärssås.", "example_translation": "Look at these pots! Perfect when we make meat sauce."}, "source": "TB p.79", "rating": 0, "group": "chapter"}, {"id": "ch7-010", "type": "noun_en", "subcategory": "kitchen", "emoji": "🥄", "front": "a spoon", "back": {"primary": "en sked", "forms": ["en sked", "skeden", "skedar", "skedarna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 2 (-ar)", "note": "", "example": "Besticken är skedar, gafflar och knivar i ett paket.", "example_translation": "The cutlery set has spoons, forks, and knives in one package."}, "source": "TB p.79", "rating": 0, "group": "chapter"}, {"id": "ch7-011", "type": "noun_en", "subcategory": "kitchen", "emoji": "🍴", "front": "a fork", "back": {"primary": "en gaffel", "forms": ["en gaffel", "gaffeln", "gafflar", "gafflarna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 2 (-ar) with stem change: gaffel → gafflar", "note": "⚠️ Stem change in plural: gaffel → gaffl-ar (drop the e)", "example": "Vi har inga gafflar hemma.", "example_translation": "We don't have any forks at home."}, "source": "TB p.77, 79", "rating": 0, "group": "chapter"}, {"id": "ch7-012", "type": "noun_en", "subcategory": "kitchen", "emoji": "🔪", "front": "a knife", "back": {"primary": "en kniv", "forms": ["en kniv", "kniven", "knivar", "knivarna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 2 (-ar)", "note": "", "example": "Jag behöver en vass kniv.", "example_translation": "I need a sharp knife."}, "source": "TB p.77", "rating": 0, "group": "chapter"}, {"id": "ch7-013", "type": "noun_ett", "subcategory": "kitchen", "emoji": "🍽️", "front": "cutlery / a set of cutlery", "back": {"primary": "ett bestick", "forms": ["ett bestick", "besticket", "bestick", "bestickEN"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 5 (no ending)", "note": "Collective word. Vi behöver nya bestick = We need new cutlery.", "example": "Besticken är jättefina!", "example_translation": "The cutlery is really nice!"}, "source": "TB p.79", "rating": 0, "group": "chapter"}, {"id": "ch7-014", "type": "noun_en", "subcategory": "clothing", "emoji": "👖", "front": "trousers / pants", "back": {"primary": "ett par byxor", "forms": ["ett par byxor", "ett par byxor", "—", "—"], "forms_labels": ["indef.", "def.", "—", "—"], "plural_group": "always plural — like English 'trousers'", "note": "⚠️ Always plural. No singular form in everyday use. Say ett par byxor (a pair of trousers).", "example": "Jag skulle vilja prova de här röda byxorna.", "example_translation": "I'd like to try on these red trousers."}, "source": "TB p.80, 82", "rating": 0, "group": "chapter"}, {"id": "ch7-015", "type": "noun_en", "subcategory": "clothing", "emoji": "🧢", "front": "a beanie / winter hat", "back": {"primary": "en mössa", "forms": ["en mössa", "mössan", "mössor", "mösskorna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 1 (-or)", "note": "mössa = winter hat/beanie. NOT a cap (that's en keps).", "example": "Det är kallt — ta på dig en mössa!", "example_translation": "It's cold — put on a hat!"}, "source": "TB p.80", "rating": 0, "group": "chapter"}, {"id": "ch7-016", "type": "noun_en", "subcategory": "clothing", "emoji": "🧥", "front": "a jacket", "back": {"primary": "en jacka", "forms": ["en jacka", "jackan", "jackor", "jackorna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 1 (-or)", "note": "Casual jacket. A formal suit jacket = en kavaj.", "example": "Jackan är dyrast av de tre.", "example_translation": "The jacket is the most expensive of the three."}, "source": "TB p.80, 84", "rating": 0, "group": "chapter"}, {"id": "ch7-017", "type": "noun_en", "subcategory": "clothing", "emoji": "👗", "front": "a skirt", "back": {"primary": "en kjol", "forms": ["en kjol", "kjolen", "kjolar", "kjolarna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 2 (-ar)", "note": "", "example": "Hon har på sig en gul kjol.", "example_translation": "She is wearing a yellow skirt."}, "source": "TB p.80", "rating": 0, "group": "chapter"}, {"id": "ch7-018", "type": "noun_en", "subcategory": "clothing", "emoji": "👔", "front": "a tie", "back": {"primary": "en slips", "forms": ["en slips", "slipsen", "slipsar", "slipsarna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 2 (-ar)", "note": "", "example": "Han bär alltid en slips på jobbet.", "example_translation": "He always wears a tie at work."}, "source": "TB p.80", "rating": 0, "group": "chapter"}, {"id": "ch7-019", "type": "noun_en", "subcategory": "clothing", "emoji": "👟", "front": "shoes / a pair of shoes", "back": {"primary": "ett par skor", "forms": ["en sko", "skon", "skor", "skorna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 1 (-or) — note: en sko (singular)", "note": "Usually said as ett par skor (a pair of shoes) in shops.", "example": "Vilken storlek har du i skor?", "example_translation": "What shoe size do you take?"}, "source": "TB p.80, 83", "rating": 0, "group": "chapter"}, {"id": "ch7-020", "type": "noun_en", "subcategory": "clothing", "emoji": "🤵", "front": "a blazer / suit jacket", "back": {"primary": "en kavaj", "forms": ["en kavaj", "kavajen", "kavajer", "kavajerna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 3 (-er)", "note": "Formal/suit jacket. Casual jacket = en jacka.", "example": "Han har på sig en mörkblå kavaj.", "example_translation": "He is wearing a dark blue blazer."}, "source": "TB p.80", "rating": 0, "group": "chapter"}, {"id": "ch7-021", "type": "noun_en", "subcategory": "clothing", "emoji": "👕", "front": "a shirt (button-up)", "back": {"primary": "en skjorta", "forms": ["en skjorta", "skjortan", "skjortor", "skjortorna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 1 (-or)", "note": "Button-up shirt. T-shirt = en t-shirt.", "example": "Jag har på mig en röd skjorta i dag.", "example_translation": "I'm wearing a red shirt today."}, "source": "TB p.80–81", "rating": 0, "group": "chapter"}, {"id": "ch7-022", "type": "noun_en", "subcategory": "clothing", "emoji": "🧶", "front": "a sweater / jumper / knitted top", "back": {"primary": "en tröja", "forms": ["en tröja", "tröjan", "tröjor", "tröjorna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 1 (-or)", "note": "General word for any top/sweater. A knitted one = en stickad tröja.", "example": "Tröjan är dyr. Byxan är dyrare. Jackan är dyrast.", "example_translation": "The sweater is expensive. The trousers are more expensive. The jacket is most expensive."}, "source": "TB p.80, 84", "rating": 0, "group": "chapter"}, {"id": "ch7-023", "type": "noun_en", "subcategory": "clothing", "emoji": "🧦", "front": "socks / a pair of socks", "back": {"primary": "ett par strumpor", "forms": ["en strumpa", "strumpan", "strumpor", "strumporna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 1 (-or) — singular = en strumpa", "note": "Usually said as ett par strumpor (a pair of socks).", "example": "Sportstrumpor — 3 par för 99 kronor!", "example_translation": "Sports socks — 3 pairs for 99 kronor!"}, "source": "TB p.80, 85", "rating": 0, "group": "chapter"}, {"id": "ch7-024", "type": "noun_ett", "subcategory": "clothing", "emoji": "👙", "front": "a tank top / camisole / vest top", "back": {"primary": "ett linne", "forms": ["ett linne", "linnet", "linnen", "linnena"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 4 (-n)", "note": "", "example": "Hon har ett grönt linne under jackan.", "example_translation": "She has a green tank top under the jacket."}, "source": "TB p.80", "rating": 0, "group": "chapter"}, {"id": "ch7-025", "type": "noun_en", "subcategory": "clothing", "emoji": "👕", "front": "a T-shirt", "back": {"primary": "en t-shirt", "forms": ["en t-shirt", "t-shirten", "t-shirts", "t-shirtsarna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "loanword — irregular plural", "note": "", "example": "Jag köpte tre t-shirts på rea.", "example_translation": "I bought three T-shirts on sale."}, "source": "TB p.80", "rating": 0, "group": "chapter"}, {"id": "ch7-026", "type": "noun_en", "subcategory": "clothing", "emoji": "🧥", "front": "a coat / overcoat (long)", "back": {"primary": "en kappa", "forms": ["en kappa", "kappan", "kappor", "kapporna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 1 (-or)", "note": "Long formal coat. Short/casual coat = en jacka.", "example": "Hon har på sig en beige kappa.", "example_translation": "She is wearing a beige coat."}, "source": "TB p.80", "rating": 0, "group": "chapter"}, {"id": "ch7-027", "type": "noun_en", "subcategory": "clothing", "emoji": "👗", "front": "a dress", "back": {"primary": "en klänning", "forms": ["en klänning", "klänningen", "klänningar", "klänningarna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 2 (-ar)", "note": "", "example": "Min semesterklänning var ett dåligt köp.", "example_translation": "My holiday dress was a bad purchase."}, "source": "TB p.80, 87", "rating": 0, "group": "chapter"}, {"id": "ch7-028", "type": "noun_en", "subcategory": "clothing", "emoji": "🧥", "front": "a cardigan", "back": {"primary": "en kofta", "forms": ["en kofta", "koftan", "koftor", "koftorna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 1 (-or)", "note": "Open-front knitted cardigan.", "example": "Hon har en lila kofta.", "example_translation": "She has a purple cardigan."}, "source": "TB p.80", "rating": 0, "group": "chapter"}, {"id": "ch7-029", "type": "noun_en", "subcategory": "clothing", "emoji": "🥷", "front": "a hoodie / hooded sweatshirt", "back": {"primary": "en hoodie / en luvtröja", "forms": ["en luvtröja", "luvtröjan", "luvtröjor", "luvtröjorna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 1 (-or)", "note": "Both hoodie and luvtröja are used. luva = hood, tröja = top.", "example": "Han har på sig en grå hoodie.", "example_translation": "He is wearing a grey hoodie."}, "source": "TB p.80", "rating": 0, "group": "chapter"}, {"id": "ch7-030", "type": "adjective", "subcategory": "colors", "emoji": "🔵", "front": "blue", "back": {"primary": "blå", "forms": ["blå (en)", "blått (ett)", "blå (plural)"], "forms_labels": ["en-word form", "ett-word form", "plural/definite form"], "note": "All three forms: en blå jacka / ett blått hus / blå kläder", "example": "Hon har en blå klänning och blå skor.", "example_translation": "She has a blue dress and blue shoes."}, "source": "TB p.81", "rating": 0, "group": "chapter"}, {"id": "ch7-031", "type": "adjective", "subcategory": "colors", "emoji": "⚪", "front": "white", "back": {"primary": "vit", "forms": ["vit (en)", "vitt (ett)", "vita (plural/def)"], "forms_labels": ["en-word form", "ett-word form", "plural/definite form"], "note": "", "example": "En vit skjorta och vita byxor.", "example_translation": "A white shirt and white trousers."}, "source": "TB p.81", "rating": 0, "group": "chapter"}, {"id": "ch7-032", "type": "adjective", "subcategory": "colors", "emoji": "🟢", "front": "green", "back": {"primary": "grön", "forms": ["grön (en)", "grönt (ett)", "gröna (plural/def)"], "forms_labels": ["en-word form", "ett-word form", "plural/definite form"], "note": "", "example": "Det finns ett par gröna byxor i storlek 36.", "example_translation": "There is a pair of green trousers in size 36."}, "source": "TB p.81–82", "rating": 0, "group": "chapter"}, {"id": "ch7-033", "type": "adjective", "subcategory": "colors", "emoji": "⚫", "front": "black", "back": {"primary": "svart", "forms": ["svart (en)", "svart (ett)", "svarta (plural/def)"], "forms_labels": ["en-word form", "ett-word form", "plural/definite form"], "note": "Same form for en and ett words!", "example": "Jag har på mig svarta byxor.", "example_translation": "I'm wearing black trousers."}, "source": "TB p.81", "rating": 0, "group": "chapter"}, {"id": "ch7-034", "type": "adjective", "subcategory": "colors", "emoji": "🟡", "front": "yellow", "back": {"primary": "gul", "forms": ["gul (en)", "gult (ett)", "gula (plural/def)"], "forms_labels": ["en-word form", "ett-word form", "plural/definite form"], "note": "", "example": "En gul kjol.", "example_translation": "A yellow skirt."}, "source": "TB p.81", "rating": 0, "group": "chapter"}, {"id": "ch7-035", "type": "adjective", "subcategory": "colors", "emoji": "🔴", "front": "red", "back": {"primary": "röd", "forms": ["röd (en)", "rött (ett)", "röda (plural/def)"], "forms_labels": ["en-word form", "ett-word form", "plural/definite form"], "note": "", "example": "Jag ville verkligen ha de röda byxorna.", "example_translation": "I really wanted the red trousers."}, "source": "TB p.81–82", "rating": 0, "group": "chapter"}, {"id": "ch7-036", "type": "adjective", "subcategory": "colors", "emoji": "🟤", "front": "brown", "back": {"primary": "brun", "forms": ["brun (en)", "brunt (ett)", "bruna (plural/def)"], "forms_labels": ["en-word form", "ett-word form", "plural/definite form"], "note": "", "example": "Hemma i Sverige använder jag bara bruna och svarta kläder.", "example_translation": "At home in Sweden I only wear brown and black clothes."}, "source": "TB p.81, 87", "rating": 0, "group": "chapter"}, {"id": "ch7-037", "type": "adjective", "subcategory": "colors", "emoji": "🩷", "front": "pink", "back": {"primary": "rosa", "forms": ["rosa (en)", "rosa (ett)", "rosa (plural/def)"], "forms_labels": ["en-word form", "ett-word form", "plural/definite form"], "note": "Invariable — same form for all genders and numbers!", "example": "En rosa och guld klänning.", "example_translation": "A pink and gold dress."}, "source": "TB p.81, 87", "rating": 0, "group": "chapter"}, {"id": "ch7-038", "type": "adjective", "subcategory": "colors", "emoji": "🩶", "front": "grey", "back": {"primary": "grå", "forms": ["grå (en)", "grått (ett)", "grå (plural/def)"], "forms_labels": ["en-word form", "ett-word form", "plural/definite form"], "note": "", "example": "En grå hoodie.", "example_translation": "A grey hoodie."}, "source": "TB p.81", "rating": 0, "group": "chapter"}, {"id": "ch7-039", "type": "adjective", "subcategory": "colors", "emoji": "🟠", "front": "orange", "back": {"primary": "orange", "forms": ["orange (en)", "orange (ett)", "orange (plural/def)"], "forms_labels": ["en-word form", "ett-word form", "plural/definite form"], "note": "Invariable — same form always, like rosa.", "example": "Hon har en orange kofta.", "example_translation": "She has an orange cardigan."}, "source": "TB p.81", "rating": 0, "group": "chapter"}, {"id": "ch7-040", "type": "adjective", "subcategory": "patterns", "emoji": "🔵⚪", "front": "polka-dotted / spotted", "back": {"primary": "prickig", "forms": ["prickig (en)", "prickigt (ett)", "prickiga (pl/def)"], "forms_labels": ["en-word form", "ett-word form", "plural/definite form"], "note": "prick = dot/spot", "example": "En prickig tröja och en blommig kjol.", "example_translation": "A polka-dot sweater and a floral skirt."}, "source": "TB p.81", "rating": 0, "group": "chapter"}, {"id": "ch7-041", "type": "adjective", "subcategory": "patterns", "emoji": "🌸", "front": "floral / flowered", "back": {"primary": "blommig", "forms": ["blommig (en)", "blommigt (ett)", "blommiga (pl/def)"], "forms_labels": ["en-word form", "ett-word form", "plural/definite form"], "note": "blomma = flower", "example": "Jag har på mig en blommig tröja.", "example_translation": "I'm wearing a floral top."}, "source": "TB p.81", "rating": 0, "group": "chapter"}, {"id": "ch7-042", "type": "adjective", "subcategory": "patterns", "emoji": "〰️", "front": "striped", "back": {"primary": "randig", "forms": ["randig (en)", "randigt (ett)", "randiga (pl/def)"], "forms_labels": ["en-word form", "ett-word form", "plural/definite form"], "note": "rand = stripe", "example": "En randig t-shirt.", "example_translation": "A striped T-shirt."}, "source": "TB p.81", "rating": 0, "group": "chapter"}, {"id": "ch7-043", "type": "adjective", "subcategory": "patterns", "emoji": "🏁", "front": "checked / plaid", "back": {"primary": "rutig", "forms": ["rutig (en)", "rutigt (ett)", "rutiga (pl/def)"], "forms_labels": ["en-word form", "ett-word form", "plural/definite form"], "note": "ruta = square/grid", "example": "En rutig jacka.", "example_translation": "A checked jacket."}, "source": "TB p.81", "rating": 0, "group": "chapter"}, {"id": "ch7-044", "type": "adjective", "subcategory": "patterns", "emoji": "🎨", "front": "patterned / with a pattern", "back": {"primary": "mönstrad", "forms": ["mönstrad (en)", "mönstrat (ett)", "mönstrade (pl/def)"], "forms_labels": ["en-word form", "ett-word form", "plural/definite form"], "note": "mönster = pattern. General word when no specific pattern name fits.", "example": "En mönstrad kappa.", "example_translation": "A patterned coat."}, "source": "TB p.81", "rating": 0, "group": "chapter"}, {"id": "ch7-045", "type": "adjective", "subcategory": "descriptive", "emoji": "💰", "front": "cheap / cheaper / cheapest", "back": {"primary": "billig", "forms": ["billig", "billigare", "billigast"], "forms_labels": ["grundform", "komparativ (+are)", "superlativ (+ast)"], "note": "Regular comparison. Pattern: -are / -ast", "example": "Har ni något billigare? — De är billigast i hela stan!", "example_translation": "Do you have something cheaper? — They are the cheapest in the whole city!"}, "source": "TB p.82–84", "rating": 0, "group": "other"}, {"id": "ch7-046", "type": "adjective", "subcategory": "descriptive", "emoji": "💸", "front": "expensive / more expensive / most expensive", "back": {"primary": "dyr", "forms": ["dyr", "dyrare", "dyrast"], "forms_labels": ["grundform", "komparativ (+are)", "superlativ (+ast)"], "note": "Regular comparison.", "example": "Tröjan är dyr. Byxan är dyrare. Jackan är dyrast.", "example_translation": "The sweater is expensive. The trousers are more expensive. The jacket is most expensive."}, "source": "TB p.84", "rating": 0, "group": "other"}, {"id": "ch7-047", "type": "adjective", "subcategory": "descriptive", "emoji": "📦", "front": "big / bigger / biggest — ⚠️ IRREGULAR", "back": {"primary": "stor", "forms": ["stor", "större", "störst"], "forms_labels": ["grundform", "komparativ (IRREGULAR)", "superlativ (IRREGULAR)"], "note": "⚠️ Irregular! NOT: storre / storast. Remember: stor → STÖR-re → STÖR-st", "example": "Den här är lite för stor. Har ni en storlek mindre?", "example_translation": "This is a bit too big. Do you have a size smaller?"}, "source": "TB p.82", "rating": 0, "group": "other"}, {"id": "ch7-048", "type": "adjective", "subcategory": "descriptive", "emoji": "🔬", "front": "small / smaller / smallest — ⚠️ IRREGULAR", "back": {"primary": "liten", "forms": ["liten", "mindre", "minst"], "forms_labels": ["grundform", "komparativ (IRREGULAR)", "superlativ (IRREGULAR)"], "note": "⚠️ Totally irregular. Memory trick: liten → mind-RE (think: 'mind the small size'). Also: en liten, ett litet, litet/lilla/små (adjective forms vary!)", "example": "Ja, den här kostar 175 men den är mindre.", "example_translation": "Yes, this one costs 175 but it's smaller."}, "source": "TB p.83", "rating": 0, "group": "other"}, {"id": "ch7-049", "type": "adjective", "subcategory": "descriptive", "emoji": "✅", "front": "good / better / best — ⚠️ IRREGULAR", "back": {"primary": "bra", "forms": ["bra", "bättre", "bäst"], "forms_labels": ["grundform", "komparativ (IRREGULAR)", "superlativ (IRREGULAR)"], "note": "⚠️ Totally irregular. bra is also invariable (same form for all genders). Memory: bra → BÄTT-re → BÄST", "example": "De passar bra! — Ja, det är ett bra pris!", "example_translation": "They fit well! — Yes, that's a good price!"}, "source": "TB p.82–83", "rating": 0, "group": "other"}, {"id": "ch7-050", "type": "adjective", "subcategory": "descriptive", "emoji": "❌", "front": "bad / worse / worst — ⚠️ IRREGULAR", "back": {"primary": "dålig", "forms": ["dålig", "sämre", "sämst"], "forms_labels": ["grundform", "komparativ (IRREGULAR)", "superlativ (IRREGULAR)"], "note": "⚠️ Irregular. Also: värre / värst used as comparative/superlative in some contexts (dålig → värre → värst).", "example": "Det var ett dåligt köp.", "example_translation": "That was a bad purchase."}, "source": "TB p.81, 87", "rating": 0, "group": "other"}, {"id": "ch7-051", "type": "adjective", "subcategory": "descriptive", "emoji": "✨", "front": "nice-looking / stylish / attractive", "back": {"primary": "snygg", "forms": ["snygg", "snyggare", "snyggast"], "forms_labels": ["grundform", "komparativ", "superlativ"], "note": "", "example": "De är jättefina! Hur snygga kan de vara?", "example_translation": "They're really nice! How stylish can they be?"}, "source": "TB p.79, 81", "rating": 0, "group": "other"}, {"id": "ch7-052", "type": "adjective", "subcategory": "descriptive", "emoji": "🌟", "front": "nice / fine / pretty", "back": {"primary": "fin", "forms": ["fin", "finare", "finast"], "forms_labels": ["grundform", "komparativ (+are)", "superlativ (+ast)"], "note": "Regular comparison. Very versatile word — can mean nice, pretty, fine, lovely.", "example": "De är finast! Jag tar dem.", "example_translation": "They're the nicest! I'll take them."}, "source": "TB p.82, 84", "rating": 0, "group": "other"}, {"id": "ch7-053", "type": "adjective", "subcategory": "descriptive", "emoji": "📏", "front": "short / shorter / shortest", "back": {"primary": "kort", "forms": ["kort", "kortare", "kortast"], "forms_labels": ["grundform", "komparativ", "superlativ"], "note": "For both length and height. Regular comparison.", "example": "Peter är kortast av de tre.", "example_translation": "Peter is the shortest of the three."}, "source": "TB p.81, 84", "rating": 0, "group": "other"}, {"id": "ch7-054", "type": "adjective", "subcategory": "descriptive", "emoji": "🌸", "front": "soft / softer / softest", "back": {"primary": "mjuk", "forms": ["mjuk", "mjukare", "mjukast"], "forms_labels": ["grundform", "komparativ", "superlativ"], "note": "Regular comparison.", "example": "Har ni någon mjukare säng?", "example_translation": "Do you have a softer bed?"}, "source": "TB p.78", "rating": 0, "group": "other"}, {"id": "ch7-055", "type": "adjective", "subcategory": "descriptive", "emoji": "🪨", "front": "hard / harder / hardest", "back": {"primary": "hård", "forms": ["hård", "hårdare", "hårdast"], "forms_labels": ["grundform", "komparativ", "superlativ"], "note": "Regular comparison.", "example": "Madrassen är lite hård för mig.", "example_translation": "The mattress is a bit hard for me."}, "source": "TB p.78", "rating": 0, "group": "other"}, {"id": "ch7-056", "type": "adjective", "subcategory": "descriptive", "emoji": "🆕", "front": "new / newer / newest", "back": {"primary": "ny", "forms": ["ny", "nyare", "nyast"], "forms_labels": ["grundform", "komparativ", "superlativ"], "note": "Regular comparison.", "example": "Jo, jag tänkte titta på en ny säng.", "example_translation": "Yes, I was thinking of looking at a new bed."}, "source": "TB p.78", "rating": 0, "group": "other"}, {"id": "ch7-057", "type": "phrase", "subcategory": "shopping", "emoji": "🛍️", "front": "Can I help you? (shop assistant, polite/formal)", "back": {"primary": "Kan jag hjälpa er?", "note": "er = formal/plural 'you'. Also: Vad kan jag hjälpa er med? (What can I help you with?) or the informal: Kan jag hjälpa dig?", "example": "– Kan jag hjälpa er?\n– Jo, jag tänkte titta på en ny säng.", "example_translation": "– Can I help you?\n– Yes, I was thinking of looking at a new bed."}, "source": "TB p.78, 83", "rating": 0, "group": "chapter"}, {"id": "ch7-058", "type": "phrase", "subcategory": "shopping", "emoji": "📏", "front": "What size do you take? / What is your size?", "back": {"primary": "Vilken storlek har du?", "note": "For shoes you can also say: Vilket nummer har du?", "example": "– Vilken storlek har du?\n– 38.", "example_translation": "– What size do you take?\n– 38."}, "source": "TB p.82", "rating": 0, "group": "chapter"}, {"id": "ch7-059", "type": "phrase", "subcategory": "shopping", "emoji": "🔽", "front": "Do you have a size smaller / bigger?", "back": {"primary": "Har ni en storlek mindre / större?", "note": "mindre = smaller. större = bigger. Provrummet är där borta = The fitting room is over there.", "example": "– Den är lite för stor. Har ni en storlek mindre?\n– Ja, ett ögonblick.", "example_translation": "– It's a bit too big. Do you have a size smaller?\n– Yes, one moment."}, "source": "TB p.82", "rating": 0, "group": "chapter"}, {"id": "ch7-060", "type": "phrase", "subcategory": "shopping", "emoji": "👗", "front": "Do they fit? / Do they suit you?", "back": {"primary": "Passar de bra?", "note": "passa = to fit, to suit. For one item: Passar den bra? (Does it fit?)", "example": "– Passar de bra?\n– Ja, de sitter jättebra. Jag tar dem.", "example_translation": "– Do they fit well?\n– Yes, they fit great. I'll take them."}, "source": "TB p.82–83", "rating": 0, "group": "chapter"}, {"id": "ch7-061", "type": "phrase", "subcategory": "shopping", "emoji": "💶", "front": "How much does it cost?", "back": {"primary": "Hur mycket kostar den / det?", "note": "den for en-words, det for ett-words. For multiple items: Hur mycket kostar de?", "example": "– Hur mycket kostar den totalt?\n– Det blir 32 500 för båda sängarna.", "example_translation": "– How much does it cost in total?\n– It comes to 32,500 for both beds."}, "source": "TB p.78, 82", "rating": 0, "group": "chapter"}, {"id": "ch7-062", "type": "phrase", "subcategory": "shopping", "emoji": "🔁", "front": "Do you have a money-back return policy?", "back": {"primary": "Har ni öppet köp?", "note": "öppet köp = you get your money back if you return the item. Always ask for the receipt (kvitto)!", "example": "– Har ni öppet köp?\n– Ja, 30 dagars öppet köp och 60 dagars bytesrätt.", "example_translation": "– Do you have a return policy?\n– Yes, 30 days money-back and 60 days exchange."}, "source": "TB p.82–83, 85", "rating": 0, "group": "chapter"}, {"id": "ch7-063", "type": "phrase", "subcategory": "shopping", "emoji": "💰", "front": "Do you have anything cheaper?", "back": {"primary": "Har ni något billigare?", "note": "något = something/anything here. billigare = cheaper (comparative of billig).", "example": "– Det är lite dyrt. Har ni något billigare?\n– Ja, vi har billigare alternativ.", "example_translation": "– That's a bit expensive. Do you have anything cheaper?\n– Yes, we have cheaper alternatives."}, "source": "TB p.78, 82", "rating": 0, "group": "chapter"}, {"id": "ch7-064", "type": "phrase", "subcategory": "shopping", "emoji": "🌈", "front": "Can I see something lighter / in a lighter shade?", "back": {"primary": "Kan jag få titta på något ljusare?", "note": "ljusare = lighter (comparative of ljus). Swap for: mörkare (darker), billigare (cheaper), större (bigger), mindre (smaller).", "example": "– Den är lite för mörk. Kan jag få titta på något ljusare?\n– Självklart. Då har vi den här till exempel.", "example_translation": "– It's a bit too dark. Can I see something lighter?\n– Of course. Then we have this one for example."}, "source": "TB p.82", "rating": 0, "group": "chapter"}, {"id": "ch7-065", "type": "verb", "subcategory": "shopping", "emoji": "🛒", "front": "to shop", "back": {"primary": "shoppa", "forms": ["shoppa", "shoppar", "shoppade", "shoppat"], "forms_labels": ["infinitiv", "presens", "preteritum", "supinum"], "note": "Group 1 verb (-ar). Regular.", "example": "Vad shoppar du helst?", "example_translation": "What do you like to shop for most?"}, "source": "TB p.75", "rating": 0, "group": "chapter"}, {"id": "ch7-066", "type": "verb", "subcategory": "shopping", "emoji": "👕", "front": "to try / to try on (clothes)", "back": {"primary": "prova (på)", "forms": ["prova", "provar", "provade", "provat"], "forms_labels": ["infinitiv", "presens", "preteritum", "supinum"], "note": "Group 1 (-ar). prova = to try. prova på = to try on (clothing). Provrummet = the fitting room.", "example": "Du kan prova på den här sängen.", "example_translation": "You can try out this bed."}, "source": "TB p.78, 82", "rating": 0, "group": "chapter"}, {"id": "ch7-067", "type": "verb", "subcategory": "shopping", "emoji": "🏷️", "front": "to cost", "back": {"primary": "kosta", "forms": ["kosta", "kostar", "kostade", "kostat"], "forms_labels": ["infinitiv", "presens", "preteritum", "supinum"], "note": "Group 1 (-ar). Regular.", "example": "Hur mycket kostar det totalt?", "example_translation": "How much does it cost in total?"}, "source": "TB p.78, 82", "rating": 0, "group": "chapter"}, {"id": "ch7-068", "type": "verb", "subcategory": "shopping", "emoji": "💳", "front": "to pay", "back": {"primary": "betala", "forms": ["betala", "betalar", "betalade", "betalat"], "forms_labels": ["infinitiv", "presens", "preteritum", "supinum"], "note": "Group 1 (-ar). Regular.", "example": "Hur vill du betala?", "example_translation": "How would you like to pay?"}, "source": "TB p.78", "rating": 0, "group": "chapter"}, {"id": "ch7-069", "type": "verb", "subcategory": "shopping", "emoji": "⚖️", "front": "to compare", "back": {"primary": "jämföra", "forms": ["jämföra", "jämför", "jämförde", "jämfört"], "forms_labels": ["infinitiv", "presens", "preteritum", "supinum"], "note": "Group 2b (-er in presens). Semi-irregular.", "example": "Vi kan jämföra varor i affären.", "example_translation": "We can compare items in the shop."}, "source": "TB p.75 (jag kan)", "rating": 0, "group": "chapter"}, {"id": "ch7-070", "type": "verb", "subcategory": "shopping", "emoji": "👗", "front": "to fit / to suit", "back": {"primary": "passa", "forms": ["passa", "passar", "passade", "passat"], "forms_labels": ["infinitiv", "presens", "preteritum", "supinum"], "note": "Group 1 (-ar). passar = fits/suits. Also: passa dig! = watch out!", "example": "Passar de bra? — Ja, de sitter jättebra.", "example_translation": "Do they fit? — Yes, they fit great."}, "source": "TB p.82", "rating": 0, "group": "chapter"}, {"id": "ch7-071", "type": "verb", "subcategory": "general", "emoji": "🤝", "front": "to help", "back": {"primary": "hjälpa", "forms": ["hjälpa", "hjälper", "hjälpte", "hjälpt"], "forms_labels": ["infinitiv", "presens", "preteritum", "supinum"], "note": "Group 2b (-er in presens). Note: presens is hjälper, NOT hjälpar!", "example": "Vad kan jag hjälpa er med?", "example_translation": "What can I help you with?"}, "source": "TB p.78", "rating": 0, "group": "other"}, {"id": "ch7-072", "type": "verb", "subcategory": "general", "emoji": "🔍", "front": "to need / to require", "back": {"primary": "behöva", "forms": ["behöva", "behöver", "behövde", "behövt"], "forms_labels": ["infinitiv", "presens", "preteritum", "supinum"], "note": "Group 2b (-er in presens). Very common verb!", "example": "Vi behöver köpa en ny säng.", "example_translation": "We need to buy a new bed."}, "source": "TB p.75, 78", "rating": 0, "group": "other"}, {"id": "ch7-073", "type": "verb", "subcategory": "general", "emoji": "🤔", "front": "to think about / consider / wonder", "back": {"primary": "fundera", "forms": ["fundera", "funderar", "funderade", "funderat"], "forms_labels": ["infinitiv", "presens", "preteritum", "supinum"], "note": "Group 1 (-ar). fundera på = think about / consider something.", "example": "Okej, då tar jag de gröna byxorna och funderar lite.", "example_translation": "Okay, then I'll take the green trousers and think about it."}, "source": "TB p.82", "rating": 0, "group": "other"}, {"id": "ch7-074", "type": "noun_en", "subcategory": "shopping", "emoji": "🏬", "front": "a department store", "back": {"primary": "ett varuhus", "forms": ["ett varuhus", "varuhuset", "varuhus", "varuhusen"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 5 (no ending)", "note": "vara = goods. hus = house. Compound word.", "example": "De börjar på avdelningen för sängar.", "example_translation": "They start at the beds department."}, "source": "TB p.77", "rating": 0, "group": "chapter"}, {"id": "ch7-075", "type": "noun_en", "subcategory": "shopping", "emoji": "🏪", "front": "a shop / store", "back": {"primary": "en affär", "forms": ["en affär", "affären", "affärer", "affärerna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 3 (-er)", "note": "Also means 'business/deal' in other contexts. I affären = in the shop.", "example": "Vi går och kollar i affären.", "example_translation": "We'll go and look in the shop."}, "source": "TB p.80", "rating": 0, "group": "chapter"}, {"id": "ch7-076", "type": "noun_en", "subcategory": "shopping", "emoji": "🏷️", "front": "a price", "back": {"primary": "ett pris", "forms": ["ett pris", "priset", "priser", "priserna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 3 (-er)", "note": "", "example": "Det var ett bra pris!", "example_translation": "That was a good price!"}, "source": "TB p.82–83", "rating": 0, "group": "chapter"}, {"id": "ch7-077", "type": "noun_en", "subcategory": "shopping", "emoji": "📏", "front": "a size", "back": {"primary": "en storlek", "forms": ["en storlek", "storleken", "storlekar", "storlekarna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 2 (-ar)", "note": "stor = big + lek(-en) = play → size. Common in shop contexts.", "example": "Vilken storlek har du? — Mellanstorleken passar bra.", "example_translation": "What size are you? — The medium size fits well."}, "source": "TB p.78, 82", "rating": 0, "group": "chapter"}, {"id": "ch7-078", "type": "noun_ett", "subcategory": "shopping", "emoji": "🧾", "front": "a receipt", "back": {"primary": "ett kvitto", "forms": ["ett kvitto", "kvittot", "kvitton", "kvittona"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 4 (-n)", "note": "⚠️ Always keep your receipt in Sweden! Required for returns and exchanges.", "example": "Du måste alltid ha kvitto.", "example_translation": "You must always have a receipt."}, "source": "TB p.83", "rating": 0, "group": "chapter"}, {"id": "ch7-079", "type": "phrase", "subcategory": "consumer", "emoji": "💵", "front": "money-back return policy (get cash back)", "back": {"primary": "öppet köp", "note": "Means the shop refunds your money if you return the item. Standard in Swedish retail. Usually 30 days. Always requires a receipt.", "example": "Vi har öppet köp i två veckor och bytesrätt i 30 dagar.", "example_translation": "We have money-back returns for two weeks and exchange rights for 30 days."}, "source": "TB p.82–83", "rating": 0, "group": "chapter"}, {"id": "ch7-080", "type": "phrase", "subcategory": "consumer", "emoji": "🔄", "front": "exchange policy (swap for another item, no cash back)", "back": {"primary": "bytesrätt", "note": "You can exchange for a different item but do NOT get your money back. Different from öppet köp! byte = exchange, rätt = right.", "example": "Bytesrätt betyder att du kan byta mot något annat, men du får inte pengarna tillbaka.", "example_translation": "Exchange rights mean you can swap for something else, but you don't get your money back."}, "source": "TB p.83", "rating": 0, "group": "chapter"}, {"id": "ch7-081", "type": "grammar", "subcategory": "pronouns", "emoji": "🟦", "front": "How do you say 'some / any' in Swedish? Give all three forms (en-word, ett-word, plural).", "back": {"primary": "någon / något / några", "table": {"en-word": "någon [spoken: nån]", "ett-word": "något [spoken: nåt]", "plural": "några [spoken: nåra]"}, "rule_english": "Use någon/något/några when you mean 'some' or 'any' and it doesn't matter exactly which one. några can also mean '2–3 of something'.", "example": "Har du någon cykel? — Ja, en röd mountainbike.\nVi har några apelsiner hemma.", "example_translation": "Do you have a bike (any bike)? — Yes, a red mountain bike.\nWe have some oranges at home."}, "source": "TB p.76 FOKUS", "rating": 0, "group": "other"}, {"id": "ch7-082", "type": "grammar", "subcategory": "pronouns", "emoji": "🚫", "front": "How do you say 'no / none / not any'? Give all three forms. What's the shortcut rule?", "back": {"primary": "ingen / inget / inga", "table": {"en-word": "ingen", "ett-word": "inget", "plural": "inga"}, "rule_english": "Shortcut: ingen = inte någon · inget = inte något · inga = inte några. They mean exactly the same thing, just shorter and more direct.", "example": "Jag har ingen bil. = Jag har inte någon bil.\nVi har inga äpplen hemma.", "example_translation": "I have no car. = I don't have any car.\nWe have no apples at home."}, "source": "TB p.76 FOKUS", "rating": 0, "group": "other"}, {"id": "ch7-083", "type": "grammar", "subcategory": "adjective_comparison", "emoji": "📈", "front": "How do you form the comparative and superlative of regular adjectives?", "back": {"primary": "grundform → + -are (komparativ) → + -ast (superlativ)", "table": {"pattern": "billig → billigare → billigast", "pattern2": "fin → finare → finast", "pattern3": "snygg → snyggare → snyggast"}, "rule_english": "Regular rule: add -are for comparative ('more'), add -ast for superlative ('most'). These endings never change for gender or number.", "example": "Den här jackan är billig. Den andra är billigare. Men den tredje är billigast.", "example_translation": "This jacket is cheap. The other one is cheaper. But the third one is cheapest."}, "source": "TB p.84 FOKUS", "rating": 0, "group": "other"}, {"id": "ch7-084", "type": "grammar", "subcategory": "adjective_comparison", "emoji": "⚠️", "front": "Name the 4 most important IRREGULAR comparative adjectives in Swedish.", "back": {"primary": "bra / dålig / stor / liten — all irregular!", "table": {"bra (good)": "bättre → bäst", "dålig (bad)": "sämre → sämst", "stor (big)": "större → störst", "liten (small)": "mindre → minst"}, "rule_english": "These four do NOT follow the regular -are/-ast pattern. You must memorise them. They are extremely common in everyday speech.", "example": "Den här sängen är bra. Den andra är bättre. Men Prinsessa är bäst!", "example_translation": "This bed is good. The other one is better. But Prinsessa is the best!"}, "source": "TB p.78, 82–84", "rating": 0, "group": "other"}, {"id": "ch7-085", "type": "grammar", "subcategory": "noun_forms", "emoji": "📚", "front": "What are the definite plural endings for nouns in each group? (plural bestämd form)", "back": {"primary": "Add -na or -a to the indefinite plural, depending on the group", "table": {"group 1 (-or)": "lampor → lamporna", "group 2 (-ar)": "sängar → sängarna", "group 3 (-er)": "affärer → affärerna", "group 4 (-n)": "äpplen → äpplena", "group 5 (0 ending)": "glas → glasen / lakan → lakanen"}, "rule_english": "Groups 1–4: add -na to the indefinite plural. Group 5 (ett-words, no plural ending): add -en. Remember: you already know the indefinite plural from the word's group — just add -na!", "example": "Till sängarna får ni dessa kuddarna, lakanen och duntäckena.", "example_translation": "With the beds you get these pillows, sheets, and duvets."}, "source": "TB p.79 FOKUS", "rating": 0, "group": "other"}, {"id": "ch7-086", "type": "adjective", "subcategory": "descriptive", "group": "other", "emoji": "📏", "front": "long / tall — longer / longest", "back": {"primary": "lång", "forms": ["lång", "längre", "längst"], "forms_labels": ["grundform", "komparativ", "superlativ"], "note": "⚠️ Irregular! Vowel shifts: å → ä in comparative. ett-word form: långt · plural: långa", "example": "Den här jackan är längst av alla.", "example_translation": "This jacket is the longest of all."}, "source": "TB p.81", "rating": 0}, {"id": "ch7-087", "type": "adjective", "subcategory": "descriptive", "group": "other", "emoji": "🧓", "front": "old — older / oldest", "back": {"primary": "gammal", "forms": ["gammal", "äldre", "äldst"], "forms_labels": ["grundform", "komparativ", "superlativ"], "note": "⚠️ Completely irregular! gammal → äldre → äldst. ett-word: gammalt · plural: gamla", "example": "Har du något som inte är så gammalt?", "example_translation": "Do you have something that isn't so old?"}, "source": "TB p.81", "rating": 0}, {"id": "ch7-088", "type": "adjective", "subcategory": "descriptive", "group": "other", "emoji": "☀️", "front": "light / bright — lighter / lightest", "back": {"primary": "ljus", "forms": ["ljus", "ljusare", "ljusast"], "forms_labels": ["grundform", "komparativ", "superlativ"], "note": "Regular comparison. ett-word: ljust · plural: ljusa. Also means 'light-coloured'.", "example": "Kan jag titta på något ljusare?", "example_translation": "Can I see something lighter?"}, "source": "TB p.81-82", "rating": 0}, {"id": "ch7-089", "type": "adjective", "subcategory": "descriptive", "group": "other", "emoji": "🌑", "front": "dark — darker / darkest", "back": {"primary": "mörk", "forms": ["mörk", "mörkare", "mörkast"], "forms_labels": ["grundform", "komparativ", "superlativ"], "note": "Regular. ett-word: mörkt · plural: mörka.", "example": "Den är lite för mörk för mig.", "example_translation": "It's a bit too dark for me."}, "source": "TB p.81-82", "rating": 0}, {"id": "ch7-090", "type": "adjective", "subcategory": "descriptive", "group": "other", "emoji": "😄", "front": "fun / funny / enjoyable — more fun / most fun", "back": {"primary": "rolig", "forms": ["rolig", "roligare", "roligast"], "forms_labels": ["grundform", "komparativ", "superlativ"], "note": "Regular. ett-word: roligt · plural: roliga. Means fun AND funny depending on context.", "example": "Shopping är roligare med en kompis.", "example_translation": "Shopping is more fun with a friend."}, "source": "TB p.81", "rating": 0}, {"id": "ch7-091", "type": "adjective", "subcategory": "descriptive", "group": "other", "emoji": "😴", "front": "boring / dull — more boring / most boring", "back": {"primary": "tråkig", "forms": ["tråkig", "tråkigare", "tråkigast"], "forms_labels": ["grundform", "komparativ", "superlativ"], "note": "Regular. ett-word: tråkigt · plural: tråkiga.", "example": "De här byxorna är lite tråkiga.", "example_translation": "These trousers are a bit boring."}, "source": "TB p.81", "rating": 0}, {"id": "ch7-092", "type": "adjective", "subcategory": "descriptive", "group": "other", "emoji": "✨", "front": "beautiful / lovely — more beautiful / most beautiful", "back": {"primary": "vacker", "forms": ["vacker", "vackrare", "vackrast"], "forms_labels": ["grundform", "komparativ", "superlativ"], "note": "⚠️ ett-word: vackert · plural: vackra (drops an -e syllable).", "example": "Vilken vacker klänning!", "example_translation": "What a beautiful dress!"}, "source": "TB p.81", "rating": 0}, {"id": "ch7-093", "type": "adjective", "subcategory": "descriptive", "group": "other", "emoji": "🙈", "front": "ugly — uglier / ugliest", "back": {"primary": "ful", "forms": ["ful", "fulare", "fulast"], "forms_labels": ["grundform", "komparativ", "superlativ"], "note": "Regular. ett-word: fult · plural: fula.", "example": "Den är lite ful, tycker jag.", "example_translation": "It's a bit ugly, I think."}, "source": "TB p.81", "rating": 0}, {"id": "ch7-094", "type": "adjective", "subcategory": "descriptive", "group": "other", "emoji": "🆕", "front": "modern / fashionable — more modern / most modern", "back": {"primary": "modern", "forms": ["modern", "modernare", "modernast"], "forms_labels": ["grundform", "komparativ", "superlativ"], "note": "Regular. ett-word: modernt · plural: moderna.", "example": "De här jeansen är väldigt moderna.", "example_translation": "These jeans are very fashionable."}, "source": "TB p.81", "rating": 0}, {"id": "ch7-095", "type": "adjective", "subcategory": "descriptive", "group": "other", "emoji": "📻", "front": "old-fashioned / unfashionable", "back": {"primary": "omodern", "forms": ["omodern", "omodernare", "omodernast"], "forms_labels": ["grundform", "komparativ", "superlativ"], "note": "Prefix o- means 'not/un-'. ett-word: omodernt · plural: omoderna.", "example": "Den kavaj är lite omodern.", "example_translation": "That blazer is a bit old-fashioned."}, "source": "TB p.81", "rating": 0}, {"id": "ch7-096", "type": "adjective", "subcategory": "descriptive", "group": "other", "emoji": "↔️", "front": "wide / broad — wider / widest", "back": {"primary": "bred", "forms": ["bred", "bredare", "bredast"], "forms_labels": ["grundform", "komparativ", "superlativ"], "note": "Regular. ett-word: brett · plural: breda.", "example": "De här byxorna är lite för breda.", "example_translation": "These trousers are a bit too wide."}, "source": "TB p.81", "rating": 0}, {"id": "ch7-097", "type": "adjective", "subcategory": "descriptive", "group": "other", "emoji": "⬆️", "front": "narrow / slim — narrower / narrowest", "back": {"primary": "smal", "forms": ["smal", "smalare", "smalast"], "forms_labels": ["grundform", "komparativ", "superlativ"], "note": "Regular. ett-word: smalt · plural: smala. Also used for 'slim' (body).", "example": "Har ni en smalare storlek?", "example_translation": "Do you have a narrower size?"}, "source": "TB p.81", "rating": 0}, {"id": "ch7-098", "type": "adjective", "subcategory": "descriptive", "group": "other", "emoji": "🧱", "front": "thick / heavy (fabric) — thicker / thickest", "back": {"primary": "tjock", "forms": ["tjock", "tjockare", "tjockast"], "forms_labels": ["grundform", "komparativ", "superlativ"], "note": "Regular. ett-word: tjockt · plural: tjocka. Also informally means 'fat'.", "example": "Den här tröjan är tjock och varm.", "example_translation": "This jumper is thick and warm."}, "source": "TB p.81", "rating": 0}, {"id": "ch7-099", "type": "adjective", "subcategory": "descriptive", "group": "other", "emoji": "⭐", "front": "popular — more popular / most popular", "back": {"primary": "populär", "forms": ["populär", "populärare", "populärast"], "forms_labels": ["grundform", "komparativ", "superlativ"], "note": "Regular. ett-word: populärt · plural: populära.", "example": "De här sängarna är mycket populära.", "example_translation": "These beds are very popular."}, "source": "TB p.78", "rating": 0}, {"id": "ch7-100", "type": "noun_en", "subcategory": "shopping", "group": "chapter", "emoji": "🏬", "front": "a department / section (in a store)", "back": {"primary": "en avdelning", "forms": ["en avdelning", "avdelningen", "avdelningar", "avdelningarna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 2 (-ar)", "note": "Compound: av + delning. Common in department stores and organisations.", "example": "Vi börjar på avdelningen för sängar.", "example_translation": "We'll start in the beds department."}, "source": "TB p.78-79", "rating": 0}, {"id": "ch7-101", "type": "noun_ett", "subcategory": "shopping", "group": "chapter", "emoji": "🚪", "front": "a fitting room / changing room", "back": {"primary": "ett provrum", "forms": ["ett provrum", "provrummet", "provrum", "provrummen"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 5 (same as sg)", "note": "Compound: prov (test/try) + rum (room).", "example": "Provrummet är där borta.", "example_translation": "The fitting room is over there."}, "source": "TB p.82", "rating": 0}, {"id": "ch7-102", "type": "noun_en", "subcategory": "shopping", "group": "chapter", "emoji": "🚪", "front": "a wardrobe / closet", "back": {"primary": "en garderob", "forms": ["en garderob", "garderoben", "garderober", "garderoberna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 3 (-er)", "note": "From French 'garde-robe'. Also used for cloakroom.", "example": "Jag är galen — jag har hela garderoben full!", "example_translation": "I'm crazy — I have the whole wardrobe full!"}, "source": "TB p.75", "rating": 0}, {"id": "ch7-103", "type": "noun_en", "subcategory": "shopping", "group": "chapter", "emoji": "🪟", "front": "a curtain", "back": {"primary": "en gardin", "forms": ["en gardin", "gardinen", "gardiner", "gardinerna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 3 (-er)", "note": "Usually used in plural: gardiner (a pair/set of curtains).", "example": "Kanske vita eller ljusa gardiner?", "example_translation": "Maybe white or light-coloured curtains?"}, "source": "TB p.75", "rating": 0}, {"id": "ch7-104", "type": "noun_ett", "subcategory": "shopping", "group": "chapter", "emoji": "⛺", "front": "a tent", "back": {"primary": "ett tält", "forms": ["ett tält", "tältet", "tält", "tälten"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 5 (same as sg)", "note": "", "example": "Det här tältet kostar 3 599 kronor.", "example_translation": "This tent costs 3,599 kronor."}, "source": "TB p.85", "rating": 0}, {"id": "ch7-105", "type": "noun_en", "subcategory": "general", "group": "other", "emoji": "💰", "front": "money (always plural in Swedish!)", "back": {"primary": "pengar", "forms": ["pengar", "pengarna"], "forms_labels": ["indef. pl", "def. pl"], "plural_group": "always plural (plurale tantum)", "note": "⚠️ No singular form! Always used in plural. 'En peng' (one coin) is archaic.", "example": "Hur mycket pengar har vi?", "example_translation": "How much money do we have?"}, "source": "TB p.78", "rating": 0}, {"id": "ch7-106", "type": "noun_en", "subcategory": "shopping", "group": "chapter", "emoji": "🏅", "front": "quality", "back": {"primary": "en kvalitet", "forms": ["en kvalitet", "kvaliteten", "kvaliteter", "kvaliteterna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 3 (-er)", "note": "", "example": "De här sängarna har absolut bäst kvalitet.", "example_translation": "These beds have absolutely the best quality."}, "source": "TB p.78", "rating": 0}, {"id": "ch7-107", "type": "noun_en", "subcategory": "shopping", "group": "chapter", "emoji": "📋", "front": "a guarantee / warranty", "back": {"primary": "en garanti", "forms": ["en garanti", "garantin", "garantier", "garantierna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 3 (-er)", "note": "", "example": "Det är 30 års garanti på sängarna.", "example_translation": "There's a 30-year guarantee on the beds."}, "source": "TB p.78", "rating": 0}, {"id": "ch7-108", "type": "noun_en", "subcategory": "shopping", "group": "chapter", "emoji": "🌿", "front": "cotton (material)", "back": {"primary": "bomull", "forms": ["bomull", "bomullen"], "forms_labels": ["indef. sg", "def. sg"], "plural_group": "uncountable — no plural", "note": "Uncountable material noun.", "example": "Lakanen är av egyptisk bomull.", "example_translation": "The sheets are made of Egyptian cotton."}, "source": "TB p.78", "rating": 0}, {"id": "ch7-109", "type": "noun_ett", "subcategory": "shopping", "group": "chapter", "emoji": "🏃", "front": "a treadmill", "back": {"primary": "ett löpband", "forms": ["ett löpband", "löpbandet", "löpband", "löpbanden"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 5 (same as sg)", "note": "Compound: löp- (running) + band (belt/track).", "example": "Du kan prova skorna på löpbandet.", "example_translation": "You can try the shoes on the treadmill."}, "source": "TB p.83", "rating": 0}, {"id": "ch7-110", "type": "noun_en", "subcategory": "shopping", "group": "chapter", "emoji": "💄", "front": "eyeshadow", "back": {"primary": "en ögonskugga", "forms": ["en ögonskugga", "ögonskuggan", "ögonskuggor", "ögonskuggorna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 1 (-or)", "note": "Compound: ögo- (eye) + skugga (shadow).", "example": "Jag letar efter en ny ögonskugga.", "example_translation": "I'm looking for a new eyeshadow."}, "source": "TB p.82", "rating": 0}, {"id": "ch7-111", "type": "noun_ett", "subcategory": "shopping", "group": "chapter", "emoji": "🕯️", "front": "a scented candle", "back": {"primary": "ett doftljus", "forms": ["ett doftljus", "doftljuset", "doftljus", "doftljusen"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 5 (same as sg)", "note": "Compound: doft (scent/fragrance) + ljus (light/candle).", "example": "Jag vill gärna ha några doftljus.", "example_translation": "I'd really love to have some scented candles."}, "source": "TB p.75", "rating": 0}, {"id": "ch7-112", "type": "noun_en", "subcategory": "shopping", "group": "chapter", "emoji": "🌸", "front": "an orchid", "back": {"primary": "en orkidé", "forms": ["en orkidé", "orkidén", "orkidéer", "orkidéerna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 3 (-er)", "note": "Note the accent mark: orkidé. Always written with it.", "example": "Jag köper alltid gamla orkidéer.", "example_translation": "I always buy old orchids."}, "source": "TB p.75", "rating": 0}, {"id": "ch7-113", "type": "noun_en", "subcategory": "clothing", "group": "chapter", "emoji": "🧣", "front": "a scarf / muffler", "back": {"primary": "en halsduk", "forms": ["en halsduk", "halsduken", "halsdukar", "halsdukarna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 2 (-ar)", "note": "Compound: hals (neck/throat) + duk (cloth/scarf).", "example": "Kanske en halsduk?", "example_translation": "Maybe a scarf?"}, "source": "TB p.75", "rating": 0}, {"id": "ch7-114", "type": "noun_en", "subcategory": "general", "group": "other", "emoji": "🔍", "front": "a detective novel / crime thriller", "back": {"primary": "en deckare", "forms": ["en deckare", "deckaren", "deckare", "deckarna"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 2 (pl = sg)", "note": "From 'detektiv'. Indef. plural looks the same as singular!", "example": "Jag skulle vilja ha en deckare.", "example_translation": "I'd like a detective novel."}, "source": "TB p.75", "rating": 0}, {"id": "ch7-115", "type": "noun_ett", "subcategory": "general", "group": "other", "emoji": "🐾", "front": "an animal", "back": {"primary": "ett djur", "forms": ["ett djur", "djuret", "djur", "djuren"], "forms_labels": ["indef. sg", "def. sg", "indef. pl", "def. pl"], "plural_group": "group 5 (same as sg)", "note": "", "example": "Min pappa är allergisk mot djur.", "example_translation": "My dad is allergic to animals."}, "source": "TB p.75", "rating": 0}, {"id": "ch7-116", "type": "noun_en", "subcategory": "shopping", "group": "chapter", "emoji": "👟", "front": "running shoes (always plural)", "back": {"primary": "löparskor", "forms": ["löparskor", "löparskorna"], "forms_labels": ["indef. pl", "def. pl"], "plural_group": "always plural (plurale tantum)", "note": "⚠️ Always plural! Compound: löpar- (runner/running) + skor (shoes).", "example": "Jag behöver nya löparskor.", "example_translation": "I need new running shoes."}, "source": "TB p.83", "rating": 0}, {"id": "ch7-117", "type": "verb", "subcategory": "general", "group": "other", "emoji": "📦", "front": "to move (house / relocate)", "back": {"primary": "flytta", "forms": ["flytta", "flyttar", "flyttade", "flyttat"], "forms_labels": ["infinitiv", "presens", "preteritum", "supinum"], "note": "Group 1 verb (-ar). flytta ihop = to move in together.", "example": "Vilma och Andreas ska flytta ihop i en ny lägenhet.", "example_translation": "Vilma and Andreas are going to move in together in a new flat."}, "source": "TB p.78", "rating": 0}, {"id": "ch7-118", "type": "verb", "subcategory": "general", "group": "other", "emoji": "🐖", "front": "to save (money) / to economise", "back": {"primary": "spara", "forms": ["spara", "sparar", "sparade", "sparat"], "forms_labels": ["infinitiv", "presens", "preteritum", "supinum"], "note": "Group 1 verb (-ar). spara pengar = to save money.", "example": "Jag tror jag måste spara lite först.", "example_translation": "I think I need to save a little first."}, "source": "TB p.75", "rating": 0}, {"id": "ch7-119", "type": "verb", "subcategory": "general", "group": "other", "emoji": "👀", "front": "to check (out) / to look at / to browse", "back": {"primary": "kolla", "forms": ["kolla", "kollar", "kollade", "kollat"], "forms_labels": ["infinitiv", "presens", "preteritum", "supinum"], "note": "Group 1 verb (-ar). Informal but very common! kolla på = to watch/check out.", "example": "Ska vi gå och kolla lite på köksgrejer?", "example_translation": "Shall we go and have a look at some kitchen stuff?"}, "source": "TB p.78", "rating": 0}, {"id": "ch7-120", "type": "verb", "subcategory": "general", "group": "other", "emoji": "💭", "front": "to dream", "back": {"primary": "drömma", "forms": ["drömma", "drömmer", "drömde", "drömt"], "forms_labels": ["infinitiv", "presens", "preteritum", "supinum"], "note": "⚠️ Group 2 verb (-er). Irregular past: drömde (not *drömade). drömma om = to dream about.", "example": "Vad drömmer du om?", "example_translation": "What do you dream about?"}, "source": "TB p.75", "rating": 0}, {"id": "ch7-121", "type": "verb", "subcategory": "general", "group": "other", "emoji": "👁️", "front": "to look / to watch / to browse (a store)", "back": {"primary": "titta", "forms": ["titta", "tittar", "tittade", "tittat"], "forms_labels": ["infinitiv", "presens", "preteritum", "supinum"], "note": "Group 1 verb (-ar). titta på = to look at / watch. titta bara = just browsing.", "example": "Nej tack, jag tittar bara.", "example_translation": "No thanks, I'm just looking."}, "source": "TB p.83", "rating": 0}, {"id": "ch7-122", "type": "phrase", "subcategory": "shopping", "group": "chapter", "emoji": "🛍️", "front": "I'm just looking. (polite reply to shop assistant)", "back": {"primary": "Jag tittar bara.", "forms": [], "forms_labels": [], "note": "Most essential shopping phrase! Polite way to decline help and just browse.", "example": "— Kan jag hjälpa er? — Nej tack, jag tittar bara.", "example_translation": "— Can I help you? — No thanks, I'm just looking."}, "source": "TB p.83", "rating": 0}, {"id": "ch7-123", "type": "phrase", "subcategory": "shopping", "group": "chapter", "emoji": "💳", "front": "to be able to afford (something)", "back": {"primary": "ha råd med", "forms": ["har råd med", "hade råd med", "ha råd med"], "forms_labels": ["presens", "preteritum", "infinitiv"], "note": "'Råd' here means financial ability, NOT 'advice'. Jag har inte råd = I can't afford it.", "example": "Jag tror inte vi har råd med det.", "example_translation": "I don't think we can afford that."}, "source": "TB p.78", "rating": 0}, {"id": "ch7-124", "type": "phrase", "subcategory": "shopping", "group": "chapter", "emoji": "😔", "front": "unfortunately (polite apology / soft decline)", "back": {"primary": "tyvärr", "forms": [], "forms_labels": [], "note": "Very common in polite Swedish. Usually placed at end: 'Inte i den färgen, tyvärr.'", "example": "Inte i den färgen, tyvärr.", "example_translation": "Not in that colour, unfortunately."}, "source": "TB p.82", "rating": 0}, {"id": "ch7-125", "type": "phrase", "subcategory": "shopping", "group": "chapter", "emoji": "🙌", "front": "of course! / obviously! (strong natural agreement)", "back": {"primary": "självklart", "forms": [], "forms_labels": [], "note": "Literally 'self-clear'. Very natural Swedish affirmation. Also: Javisst! = certainly!", "example": "Självklart! Vi har öppet köp i två veckor.", "example_translation": "Of course! We have a money-back policy for two weeks."}, "source": "TB p.82", "rating": 0}, {"id": "ch7-126", "type": "phrase", "subcategory": "general", "group": "other", "emoji": "🤔", "front": "maybe / perhaps", "back": {"primary": "kanske", "forms": [], "forms_labels": [], "note": "Very common! Can come at start or middle of sentence. No agreement changes.", "example": "Vi kanske ska titta på några billigare sängar?", "example_translation": "Maybe we should look at some cheaper beds?"}, "source": "TB p.75-78", "rating": 0}, {"id": "ch7-127", "type": "phrase", "subcategory": "shopping", "group": "chapter", "emoji": "✅", "front": "I'll take it. / I'll take them.", "back": {"primary": "Jag tar det. / Jag tar dem.", "forms": [], "forms_labels": [], "note": "'det' for ett-words/singular; 'dem' for plural. Jag tar dem = I'll take them.", "example": "Det låter toppen! Jag tar det.", "example_translation": "That sounds great! I'll take it."}, "source": "TB p.78", "rating": 0}, {"id": "ch7-128", "type": "phrase", "subcategory": "shopping", "group": "chapter", "emoji": "⏳", "front": "Just a moment! / One second! (in a shop)", "back": {"primary": "Ett ögonblick!", "forms": [], "forms_labels": [], "note": "Literally 'an eye-blink'. Very polite, standard shop phrase.", "example": "Ett ögonblick. Här har vi ett par.", "example_translation": "Just a moment. Here we have a pair."}, "source": "TB p.82", "rating": 0}, {"id": "ch7-129", "type": "phrase", "subcategory": "general", "group": "other", "emoji": "💯", "front": "really / truly / indeed (strong emphasis)", "back": {"primary": "verkligen", "forms": [], "forms_labels": [], "note": "Stronger than 'ganska' or 'väldigt'. Jag vill verkligen ha det = I really, really want it.", "example": "Verkligen! De håller absolut bäst kvalitet.", "example_translation": "Really! They are absolutely the best quality."}, "source": "TB p.78", "rating": 0}, {"id": "ch7-130", "type": "phrase", "subcategory": "general", "group": "other", "emoji": "👌", "front": "absolutely! / definitely! / yes of course! (strong agreement)", "back": {"primary": "absolut", "forms": [], "forms_labels": [], "note": "Used as strong agreement — like English 'absolutely!' Also an adverb meaning 'absolutely' in descriptions.", "example": "Absolut! Ska vi ta mellanstorleken?", "example_translation": "Absolutely! Should we take the medium size?"}, "source": "TB p.79", "rating": 0}];
+
+const STORAGE_KEY = 'svenska_ch7_ratings_v3';
+
+const TYPE_LABELS = {
+  noun_en:   'en-word',
+  noun_ett:  'ett-word',
+  adjective: 'Adjective',
+  verb:      'Verb',
+  phrase:    'Phrase',
+  grammar:   'Grammar',
+};
+
+const TYPE_COLORS = {
+  noun_en:   '#2065B8',
+  noun_ett:  '#1F8A4A',
+  adjective: '#B8720A',
+  verb:      '#C03018',
+  phrase:    '#5E35B1',
+  grammar:   '#007D82',
+};
+
+// Colors for form positions (0=type color, 1,2,3 fixed)
+const FORM_POS_COLORS = [null, '#0A818A', '#7028C8', '#B56008'];
+
+const DECO_LABELS = {
+  noun_en: 'N·EN', noun_ett: 'N·ETT', adjective: 'ADJ',
+  verb: 'VB', phrase: 'PH', grammar: 'GR'
+};
+
+// ── TTS ─────────────────────────────────────────────────────────────────────
+function speak(text, btnEl) {
+  if (!window.speechSynthesis) { alert('Speech not supported in this browser.'); return; }
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'sv-SE';
+  utter.rate = 0.88;
+  if (btnEl) {
+    btnEl.classList.add('speaking');
+    utter.onend = () => btnEl.classList.remove('speaking');
+    utter.onerror = () => btnEl.classList.remove('speaking');
+  }
+  window.speechSynthesis.speak(utter);
+}
+
+const WEIGHT_MAP = { 0:4, 1:6, 2:5, 3:3, 4:2, 5:1 };
+
+// ── STATE ───────────────────────────────────────────────────────────────────
+let ratings      = {};
+let deck         = [];
+let pos          = 0;
+let flipped      = false;
+let activeGroup  = 'all';
+let activeType   = 'all';
+
+// ── DARK MODE ───────────────────────────────────────────────────────────────
+const html = document.documentElement;
+const DM_KEY = 'svenska_darkmode';
+if (localStorage.getItem(DM_KEY) === 'dark') html.setAttribute('data-theme', 'dark');
+
+document.getElementById('darkToggle').addEventListener('click', () => {
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  localStorage.setItem(DM_KEY, isDark ? 'light' : 'dark');
+});
+
+// ── RATINGS ─────────────────────────────────────────────────────────────────
+function loadRatings() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) ratings = JSON.parse(saved);
+  } catch(e) {}
+}
+function saveRatings() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(ratings));
+}
+
+// ── FILTERING ───────────────────────────────────────────────────────────────
+function getPool() {
+  return CARDS_RAW.filter(c => {
+    const groupOk = activeGroup === 'all' || c.group === activeGroup;
+    const typeOk  = activeType  === 'all' || c.type  === activeType;
+    return groupOk && typeOk;
+  });
+}
+
+function buildDeck() {
+  deck = [];
+  getPool().forEach(card => {
+    const r = ratings[card.id] || 0;
+    const w = WEIGHT_MAP[r] || 4;
+    for (let i = 0; i < w; i++) deck.push(card);
+  });
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+  pos = 0;
+}
+
+function getMastery() {
+  const pool = getPool();
+  if (!pool.length) return 0;
+  const total = pool.reduce((sum, c) => sum + (ratings[c.id] || 0), 0);
+  return Math.round((total / (pool.length * 5)) * 100);
+}
+
+// ── RENDER ──────────────────────────────────────────────────────────────────
+function updateHeader() {
+  document.getElementById('masteryPct').textContent = getMastery() + '%';
+  document.getElementById('progressLabel').textContent =
+    deck.length ? `${pos + 1} / ${deck.length}` : '0 / 0';
+  document.getElementById('progressBar').style.width =
+    deck.length ? ((pos / deck.length) * 100) + '%' : '0%';
+}
+
+function showCard() {
+  if (pos >= deck.length) {
+    document.getElementById('cardWrap').style.display = 'none';
+    document.getElementById('cardRating').classList.remove('visible');
+    document.getElementById('celebration').classList.add('visible');
+    return;
+  }
+
+  document.getElementById('celebration').classList.remove('visible');
+  document.getElementById('cardWrap').style.display = 'block';
+
+  const card  = deck[pos];
+  const color = TYPE_COLORS[card.type] || '#888';
+  const label = TYPE_LABELS[card.type] || card.type;
+
+  // Reset to front
+  flipped = false;
+  document.getElementById('cardWrap').classList.remove('flipped');
+  document.getElementById('cardRating').classList.remove('visible');
+
+  // Accent bars
+  document.getElementById('frontBar').style.background = color;
+  document.getElementById('backBar').style.background  = color;
+
+  // Front
+  const fb = document.getElementById('frontBadge');
+  fb.textContent = label;
+  fb.style.background = color;
+  document.getElementById('cardEmoji').textContent = card.emoji || '📖';
+  document.getElementById('cardPrompt').textContent = card.front;
+
+  // Back english header
+  const beh = document.getElementById('backEnHeader');
+  beh.textContent = card.front;
+  beh.style.color = color;
+
+  // Back primary word — in type color
+  const bp = document.getElementById('backPrimary');
+  bp.textContent = card.back.primary;
+  bp.style.color = color;
+
+  // Plural group tag
+  const pg = document.getElementById('backPluralGroup');
+  if (card.back.plural_group) {
+    pg.textContent = card.back.plural_group;
+    pg.style.display = 'block';
+  } else {
+    pg.style.display = 'none';
+  }
+
+  // Forms grid — first value colored, rest normal
+  const formsEl = document.getElementById('backForms');
+  formsEl.innerHTML = '';
+  if (card.back.table) {
+    const tbl = document.createElement('table');
+    tbl.className = 'grammar-table';
+    Object.entries(card.back.table).forEach(([k, v]) => {
+      const tr = tbl.insertRow();
+      tr.insertCell().textContent = k;
+      tr.insertCell().textContent = v;
+    });
+    formsEl.appendChild(tbl);
+  } else if (card.back.forms && card.back.forms.length) {
+    const grid = document.createElement('div');
+    grid.className = 'card-forms-table';
+    card.back.forms.forEach((form, i) => {
+      const rowColor = FORM_POS_COLORS[i] || color;
+      const row = document.createElement('div');
+      row.className = 'form-row';
+      row.style.background = rowColor + '22';
+
+      const lbl = document.createElement('div');
+      lbl.className = 'form-cell-label';
+      lbl.textContent = card.back.forms_labels?.[i] || '';
+      lbl.style.background = rowColor;
+      lbl.style.color = 'white';
+
+      const val = document.createElement('div');
+      val.className = 'form-cell-value';
+      val.textContent = form;
+      val.style.color = rowColor;
+
+      row.appendChild(lbl);
+      row.appendChild(val);
+      grid.appendChild(row);
+    });
+    formsEl.appendChild(grid);
+  }
+
+  // Note
+  const noteEl = document.getElementById('backNote');
+  if (card.back.note) {
+    noteEl.textContent = card.back.note;
+    noteEl.style.display = 'block';
+    noteEl.style.borderLeftColor = color;
+    noteEl.style.background  = color + '18';
+    noteEl.style.color = 'var(--text2)';
+  } else {
+    noteEl.style.display = 'none';
+  }
+
+  // Speak buttons
+  const speakWordBtn = document.getElementById('speakWord');
+  speakWordBtn.onclick = (e) => { e.stopPropagation(); speak(card.back.primary, speakWordBtn); };
+
+  // Example
+  const exEl = document.getElementById('backExample');
+  const speakExBtn = document.getElementById('speakExample');
+  if (card.back.example) {
+    exEl.innerHTML = `<b>${card.back.example}</b><br><span style="font-style:normal;font-size:0.82rem;color:var(--subtext)">${card.back.example_translation || ''}</span>`;
+    speakExBtn.style.display = 'inline-flex';
+    speakExBtn.onclick = (e) => { e.stopPropagation(); speak(card.back.example, speakExBtn); };
+  } else if (card.back.rule_english) {
+    exEl.textContent = card.back.rule_english;
+    speakExBtn.style.display = 'none';
+  } else {
+    exEl.textContent = '';
+    speakExBtn.style.display = 'none';
+  }
+
+  // Deco background label
+  const decoEl = document.getElementById('cardDeco');
+  decoEl.textContent = DECO_LABELS[card.type] || '';
+  decoEl.style.color = color;
+
+  document.getElementById('backSource').textContent = card.source || '';
+  updateHeader();
+}
+
+function handleCardClick() {
+  if (!flipped) {
+    flipped = true;
+    document.getElementById('cardWrap').classList.add('flipped');
+    document.getElementById('cardRating').classList.add('visible');
+  } else {
+    flipped = false;
+    document.getElementById('cardWrap').classList.remove('flipped');
+    document.getElementById('cardRating').classList.remove('visible');
+  }
+}
+
+function rateCard(r) {
+  const card = deck[pos];
+  ratings[card.id] = r;
+  saveRatings();
+  pos++;
+  showCard();
+}
+
+function startNewRound() {
+  buildDeck();
+  showCard();
+}
+
+// ── FILTER EVENT HANDLERS ───────────────────────────────────────────────────
+document.getElementById('groupTabs').addEventListener('click', e => {
+  const btn = e.target.closest('.filter-tab');
+  if (!btn) return;
+  document.querySelectorAll('#groupTabs .filter-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeGroup = btn.dataset.group;
+  buildDeck();
+  showCard();
+  updateFilterCounts();
+});
+
+document.getElementById('typeTabs').addEventListener('click', e => {
+  const btn = e.target.closest('.filter-tab');
+  if (!btn) return;
+  document.querySelectorAll('#typeTabs .filter-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeType = btn.dataset.type;
+  buildDeck();
+  showCard();
+  updateFilterCounts();
+});
+
+function updateFilterCounts() {
+  const pool = getPool();
+  document.querySelector('#groupTabs .filter-tab[data-group="all"]').textContent =
+    `All (${CARDS_RAW.length})`;
+  const chapCount = CARDS_RAW.filter(c => c.group === 'chapter').length;
+  const otherCount = CARDS_RAW.filter(c => c.group === 'other').length;
+  document.querySelector('#groupTabs .filter-tab[data-group="chapter"]').textContent =
+    `Chapter vocab (${chapCount})`;
+  document.querySelector('#groupTabs .filter-tab[data-group="other"]').textContent =
+    `Other words (${otherCount})`;
+
+  document.querySelectorAll('#typeTabs .filter-tab[data-type]').forEach(btn => {
+    const t = btn.dataset.type;
+    if (t === 'all') {
+      btn.textContent = `All types`;
+      return;
+    }
+    const count = CARDS_RAW.filter(c => c.type === t).length;
+    btn.textContent = `${TYPE_LABELS[t]} (${count})`;
+  });
+}
+
+// ── INIT ────────────────────────────────────────────────────────────────────
+loadRatings();
+updateFilterCounts();
+buildDeck();
+showCard();
+</script>
+</body>
+</html>
