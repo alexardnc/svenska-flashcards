@@ -1,7 +1,7 @@
 # Svenska Study Portal — Exercise Drills Design
 
 **Date:** 2026-04-18
-**Status:** In progress (sections 1-6 approved, sections 7-8 pending)
+**Status:** Complete — all sections approved
 **Exam date:** 2026-04-27 (written + oral, equal weight)
 **Scope:** Build on existing ch 7-9 data (284 cards). Ch 11-13 added later.
 
@@ -343,10 +343,78 @@ Add 5 rows instead of 3:
 
 ---
 
-## Sections Still Pending
+## Section 11: Sentence Builder
 
-- **Sentence Builder** — construct full Swedish sentences from English prompts (design TBD)
-- **Chapter Review** — multiple choice quiz mixing all grammar types (design TBD)
+The most important feature for the **oral exam** — trains producing full Swedish sentences from scratch.
+
+### Flow
+1. See an **English sentence** + hint showing grammar point being tested (e.g. "presens perfekt", "word order", "preposition")
+2. **Type the full Swedish sentence**
+3. System compares answer word by word
+
+### Layered Feedback (not just right/wrong)
+- **Correct words** stay in green
+- **Wrong words** in red with correct word above in green
+- **Missing words** shown as gaps with correct word in teal
+- **Extra words** in orange strikethrough
+- Below word-by-word comparison: explanation card breaking down each error type
+
+### Example
+> English: "I have lived in Malmö for three years."
+>
+> You typed: ~~Jag har bott på Malmö för tre år.~~
+>
+> **Jag har bott i Malmö i tre år.**
+>
+> Two errors found:
+> 1. ~~**på**~~ → **i** — cities use **i**, not på
+> 2. ~~**för**~~ → **i** — duration uses **i** + time: **i** tre år, **i** en vecka
+
+### Sentence Sources
+- Adapted from textbook/workbook exercises and dialogues
+- Each sentence tagged with chapter + grammar point
+- Verified against source material — no invented sentences
+
+### Difficulty Progression
+- **Level 1:** Short sentences, one grammar point (e.g. "Jag bor i Malmö.")
+- **Level 2:** Medium sentences, two grammar points (e.g. "Jag har bott i Malmö i tre år.")
+- **Level 3:** Complex sentences with bisatser, particles, pronouns (e.g. "Han sa att han hade laddat ner appen innan han åkte.")
+
+### Filtering
+By chapter, by grammar focus (verb tense / preposition / word order / pronoun), by difficulty level, weakest first.
+
+---
+
+## Section 12: Chapter Review (Multiple Choice)
+
+Mirrors **"Repetera kapitlet"** and **"Repetera allt"** from the workbook — mixed quiz testing everything at once.
+
+### Flow
+1. See a question with **3-4 answer options**
+2. Questions **mixed across all grammar types** — verbs, nouns, adjectives, prepositions, pronouns, particles, word order
+3. Tap/click answer
+4. Correct option turns green, wrong turns red
+5. Explanation card appears (same color-coded system)
+6. After all questions: **score summary** with breakdown by grammar type
+
+### Question Types (mirroring workbook)
+- **Correct verb form:** "Jag ___ till Stockholm igår." → åkte / har åkt / åker
+- **Correct preposition:** "Vi ses ___ fredag." → i / på / om
+- **Correct pronoun:** "Har du ___ frågor?" → någon / något / några
+- **Correct noun form:** "Alla ___ var stängda." → butik / butiker / butikerna
+- **Correct adjective form:** "Det är ett ___ hus." → stor / stort / stora
+- **Correct word order:** Which sentence is correct? → three V2 placement options
+- **Correct particle:** "Han kopplar ___ i helgen." → av / på / in
+
+### End-of-Quiz Summary
+Breakdown showing % correct per grammar category, color-coded by type. Instantly shows weakest area so you know what to drill next.
+
+### Two Modes
+- **Chapter Review** — questions from one chapter only
+- **Full Review** — questions mixed across all chapters (exam simulation)
+
+### Filtering
+By chapter or all chapters, by grammar type.
 
 ---
 
