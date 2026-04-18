@@ -1434,7 +1434,18 @@ const CHAPTERS = {
 let currentChapter = 7;
 let CARDS_RAW = CHAPTERS[currentChapter].cards;
 
-function getStorageKey() { return `svenska_ch${currentChapter}_ratings_v3`; }
+function getAllCards() {
+  return Object.values(CHAPTERS).flatMap(ch => ch.cards);
+}
+
+function getChapterFromCardId(id) {
+  const m = id.match(/^ch(\d+)-/);
+  return m ? Number(m[1]) : currentChapter;
+}
+
+function getStorageKey(chNum) {
+  return `svenska_ch${chNum || currentChapter}_ratings_v3`;
+}
 
 const TYPE_LABELS = {
   noun_en:   'en-word',
@@ -1502,12 +1513,36 @@ document.getElementById('darkToggle').addEventListener('click', () => {
 function loadRatings() {
   try {
     ratings = {};
-    const saved = localStorage.getItem(getStorageKey());
-    if (saved) ratings = JSON.parse(saved);
+    if (currentChapter === 'all') {
+      // Merge ratings from all chapters
+      Object.keys(CHAPTERS).forEach(num => {
+        const saved = localStorage.getItem(getStorageKey(num));
+        if (saved) Object.assign(ratings, JSON.parse(saved));
+      });
+    } else {
+      const saved = localStorage.getItem(getStorageKey());
+      if (saved) ratings = JSON.parse(saved);
+    }
   } catch(e) {}
 }
 function saveRatings() {
-  localStorage.setItem(getStorageKey(), JSON.stringify(ratings));
+  if (currentChapter === 'all') {
+    // Save each card's rating to its own chapter's storage
+    const byChapter = {};
+    Object.entries(ratings).forEach(([id, r]) => {
+      const ch = getChapterFromCardId(id);
+      if (!byChapter[ch]) {
+        const existing = localStorage.getItem(getStorageKey(ch));
+        byChapter[ch] = existing ? JSON.parse(existing) : {};
+      }
+      byChapter[ch][id] = r;
+    });
+    Object.entries(byChapter).forEach(([ch, data]) => {
+      localStorage.setItem(getStorageKey(ch), JSON.stringify(data));
+    });
+  } else {
+    localStorage.setItem(getStorageKey(), JSON.stringify(ratings));
+  }
 }
 
 // ── FILTERING ───────────────────────────────────────────────────────────────
@@ -1767,7 +1802,7 @@ function switchView(viewName) {
   // Update header title based on view
   const titles = {
     dashboard: 'Svenska',
-    flashcards: CHAPTERS[currentChapter].title,
+    flashcards: currentChapter === 'all' ? 'All Chapters' : CHAPTERS[currentChapter].title,
     'verb-drill': 'Verb Drill'
   };
   document.getElementById('headerChapter').textContent = titles[viewName] || '';
@@ -1800,7 +1835,7 @@ function toggleSettingsPanel() {
 
 function updateNavChapter() {
   const badge = document.getElementById('navChapterNum');
-  if (badge) badge.textContent = currentChapter;
+  if (badge) badge.textContent = currentChapter === 'all' ? 'All' : currentChapter;
 }
 
 // ── DASHBOARD ───────────────────────────────────────────────────────────────
@@ -1808,6 +1843,11 @@ function renderDashChapterSelector() {
   const container = document.getElementById('dashChapterSelector');
   if (!container) return;
   container.innerHTML = '';
+  container.appendChild(createAllChapterBtn('cards', () => {
+    switchChapter('all');
+    renderDashChapterSelector();
+    updateDashboard();
+  }));
   Object.values(CHAPTERS).forEach(ch => {
     const btn = document.createElement('button');
     btn.className = 'chapter-btn' + (ch.num === currentChapter ? ' active' : '');
@@ -1827,15 +1867,27 @@ function renderDashChapterSelector() {
 }
 
 function updateDashboard() {
-  const ch = CHAPTERS[currentChapter];
+  const cards = currentChapter === 'all' ? getAllCards() : CHAPTERS[currentChapter].cards;
   const sub = document.getElementById('dashSubtitle');
-  if (sub) sub.textContent = `Kapitel ${currentChapter} \u00B7 ${ch.cards.length} cards`;
+  if (currentChapter === 'all') {
+    if (sub) sub.textContent = `All Chapters \u00B7 ${cards.length} cards`;
+  } else {
+    if (sub) sub.textContent = `Kapitel ${currentChapter} \u00B7 ${cards.length} cards`;
+  }
 
-  // Flashcard mastery
-  const ratings = JSON.parse(localStorage.getItem(getStorageKey()) || '{}');
-  const cards = ch.cards;
+  // Flashcard mastery — load ratings for relevant chapters
+  let dashRatings = {};
+  if (currentChapter === 'all') {
+    Object.keys(CHAPTERS).forEach(num => {
+      const saved = localStorage.getItem(getStorageKey(num));
+      if (saved) Object.assign(dashRatings, JSON.parse(saved));
+    });
+  } else {
+    const saved = localStorage.getItem(getStorageKey());
+    if (saved) dashRatings = JSON.parse(saved);
+  }
   if (cards.length > 0) {
-    const totalRating = cards.reduce((sum, c) => sum + (ratings[c.id] || 0), 0);
+    const totalRating = cards.reduce((sum, c) => sum + (dashRatings[c.id] || 0), 0);
     const maxRating = cards.length * 5;
     const pct = Math.round((totalRating / maxRating) * 100);
     const bar = document.getElementById('mastery-flashcards');
@@ -1843,8 +1895,8 @@ function updateDashboard() {
   }
 
   // Verb drill mastery
-  const verbScores = JSON.parse(localStorage.getItem(`svenska_ch${currentChapter}_verb_scores`) || '{}');
-  const verbs = ch.cards.filter(c => c.type === 'verb');
+  const verbScores = loadVerbScores();
+  const verbs = cards.filter(c => c.type === 'verb');
   if (verbs.length > 0) {
     const totalForms = verbs.length * 4;
     let correct = 0;
@@ -1859,6 +1911,25 @@ function updateDashboard() {
 }
 
 // ── VERB DRILL LOGIC ────────────────────────────────────────────────────────
+function loadVerbScores() {
+  if (currentChapter === 'all') {
+    let merged = {};
+    Object.keys(CHAPTERS).forEach(num => {
+      const saved = localStorage.getItem(`svenska_ch${num}_verb_scores`);
+      if (saved) Object.assign(merged, JSON.parse(saved));
+    });
+    return merged;
+  }
+  return JSON.parse(localStorage.getItem(`svenska_ch${currentChapter}_verb_scores`) || '{}');
+}
+
+function saveVerbScore(verbId, results) {
+  const ch = getChapterFromCardId(verbId);
+  const scores = JSON.parse(localStorage.getItem(`svenska_ch${ch}_verb_scores`) || '{}');
+  scores[verbId] = results;
+  localStorage.setItem(`svenska_ch${ch}_verb_scores`, JSON.stringify(scores));
+}
+
 function parseVerbGroup(note) {
   if (!note) return { group: '?', label: 'Unknown' };
   const m = note.match(/Group\s+(\d[ab]?)/i);
@@ -1877,8 +1948,8 @@ function deriveImperativ(infinitiv, group) {
 }
 
 function getVerbsForDrill() {
-  const ch = CHAPTERS[currentChapter];
-  return ch.cards
+  const cards = currentChapter === 'all' ? getAllCards() : CHAPTERS[currentChapter].cards;
+  return cards
     .filter(c => c.type === 'verb')
     .map(c => {
       const gInfo = parseVerbGroup(c.back.note);
@@ -1921,7 +1992,7 @@ function startVerbDrill() {
   }
 
   // Weakest first
-  const scores = JSON.parse(localStorage.getItem(`svenska_ch${currentChapter}_verb_scores`) || '{}');
+  const scores = loadVerbScores();
   verbs.sort((a, b) => {
     const sa = scores[a.id];
     const sb = scores[b.id];
@@ -2005,9 +2076,7 @@ function checkVerbDrill() {
 
   verbDrillResults.push({ id: verb.id, ...results });
 
-  const scores = JSON.parse(localStorage.getItem(`svenska_ch${currentChapter}_verb_scores`) || '{}');
-  scores[verb.id] = results;
-  localStorage.setItem(`svenska_ch${currentChapter}_verb_scores`, JSON.stringify(scores));
+  saveVerbScore(verb.id, results);
 
   document.getElementById('verbCheckBtn').style.display = 'none';
   document.getElementById('verbNextBtn').style.display = '';
@@ -2233,6 +2302,22 @@ function renderVerbChapterSelector() {
   const container = document.getElementById('verbChapterSelector');
   if (!container) return;
   container.innerHTML = '';
+  const allVerbCount = getAllCards().filter(c => c.type === 'verb').length;
+  const allBtn = document.createElement('button');
+  allBtn.className = 'chapter-btn' + (currentChapter === 'all' ? ' active' : '');
+  allBtn.dataset.chapter = 'all';
+  allBtn.innerHTML = `
+    <div class="chapter-btn-num">All</div>
+    <div class="chapter-btn-label">Combined</div>
+    <div class="chapter-btn-count">${allVerbCount} verbs</div>
+  `;
+  allBtn.addEventListener('click', () => {
+    switchChapter('all');
+    renderVerbChapterSelector();
+    renderVerbGroupFilter();
+    startVerbDrill();
+  });
+  container.appendChild(allBtn);
   Object.values(CHAPTERS).forEach(ch => {
     const verbCount = ch.cards.filter(c => c.type === 'verb').length;
     const btn = document.createElement('button');
@@ -2254,9 +2339,24 @@ function renderVerbChapterSelector() {
 }
 
 // ── CHAPTER SWITCHING ────────────────────────────────────────────────────────
+function createAllChapterBtn(countLabel, onClick) {
+  const totalCount = getAllCards().length;
+  const btn = document.createElement('button');
+  btn.className = 'chapter-btn' + (currentChapter === 'all' ? ' active' : '');
+  btn.dataset.chapter = 'all';
+  btn.innerHTML = `
+    <div class="chapter-btn-num">All</div>
+    <div class="chapter-btn-label">Combined</div>
+    <div class="chapter-btn-count">${totalCount} ${countLabel}</div>
+  `;
+  btn.addEventListener('click', onClick);
+  return btn;
+}
+
 function renderChapterSelector() {
   const container = document.getElementById('chapterSelector');
   container.innerHTML = '';
+  container.appendChild(createAllChapterBtn('cards', () => switchChapter('all')));
   Object.values(CHAPTERS).forEach(ch => {
     const btn = document.createElement('button');
     btn.className = 'chapter-btn' + (ch.num === currentChapter ? ' active' : '');
@@ -2274,12 +2374,18 @@ function renderChapterSelector() {
 function switchChapter(num) {
   if (num === currentChapter) return;
   currentChapter = num;
-  CARDS_RAW = CHAPTERS[num].cards;
-  document.getElementById('headerChapter').textContent = CHAPTERS[num].title;
+  if (num === 'all') {
+    CARDS_RAW = getAllCards();
+    document.getElementById('headerChapter').textContent = 'All Chapters';
+  } else {
+    CARDS_RAW = CHAPTERS[num].cards;
+    document.getElementById('headerChapter').textContent = CHAPTERS[num].title;
+  }
 
   // Update chapter selector active state
   document.querySelectorAll('.chapter-btn').forEach(b => {
-    b.classList.toggle('active', Number(b.dataset.chapter) === num);
+    const bCh = b.dataset.chapter === 'all' ? 'all' : Number(b.dataset.chapter);
+    b.classList.toggle('active', bCh === num);
   });
 
   // Reset filters
@@ -2312,11 +2418,18 @@ function switchChapter(num) {
 
 // ── INIT ────────────────────────────────────────────────────────────────────
 // Restore last used chapter
-const savedChapter = Number(localStorage.getItem('svenska_last_chapter'));
-if (savedChapter && CHAPTERS[savedChapter]) {
-  currentChapter = savedChapter;
-  CARDS_RAW = CHAPTERS[savedChapter].cards;
-  document.getElementById('headerChapter').textContent = CHAPTERS[savedChapter].title;
+const savedChapterRaw = localStorage.getItem('svenska_last_chapter');
+if (savedChapterRaw === 'all') {
+  currentChapter = 'all';
+  CARDS_RAW = getAllCards();
+  document.getElementById('headerChapter').textContent = 'All Chapters';
+} else {
+  const savedChapter = Number(savedChapterRaw);
+  if (savedChapter && CHAPTERS[savedChapter]) {
+    currentChapter = savedChapter;
+    CARDS_RAW = CHAPTERS[savedChapter].cards;
+    document.getElementById('headerChapter').textContent = CHAPTERS[savedChapter].title;
+  }
 }
 
 renderChapterSelector();
