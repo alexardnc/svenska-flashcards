@@ -715,6 +715,10 @@ main {
   .rating-btn         { width: 44px; height: 44px; }
   .rating-btn .btn-num { font-size: 1.2rem; }
 }
+
+/* ── VIEW SYSTEM ── */
+.view { display: none; width: 100%; }
+.view.active { display: flex; flex-direction: column; align-items: center; gap: 12px; }
 </style>
 </head>
 <body>
@@ -740,6 +744,12 @@ main {
 </header>
 
 <main>
+  <!-- DASHBOARD VIEW -->
+  <div id="view-dashboard" class="view">
+  </div>
+
+  <!-- FLASHCARDS VIEW (existing content) -->
+  <div id="view-flashcards" class="view active">
   <!-- Chapter selector -->
   <div class="chapter-selector" id="chapterSelector"></div>
 
@@ -845,6 +855,11 @@ main {
     <h2>Round done!</h2>
     <p>Ratings saved — cards you struggled with will appear more often next round.</p>
     <button class="restart-btn" onclick="startNewRound()">Keep going →</button>
+  </div>
+  </div>
+
+  <!-- VERB DRILL VIEW -->
+  <div id="view-verb-drill" class="view">
   </div>
 </main>
 
@@ -1187,6 +1202,30 @@ function updateFilterCounts() {
     const count = CARDS_RAW.filter(c => c.type === t).length;
     btn.textContent = `${TYPE_LABELS[t]} (${count})`;
   });
+}
+
+// ── VIEW SWITCHING ──────────────────────────────────────────────────────────
+let currentView = 'flashcards';
+
+function switchView(viewName) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const target = document.getElementById('view-' + viewName);
+  if (target) target.classList.add('active');
+  currentView = viewName;
+  localStorage.setItem('svenska_last_view', viewName);
+
+  // Update bottom nav active state
+  document.querySelectorAll('.bottom-nav-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === viewName);
+  });
+
+  // Update header title based on view
+  const titles = {
+    dashboard: 'Svenska',
+    flashcards: CHAPTERS[currentChapter].title,
+    'verb-drill': 'Verb Drill'
+  };
+  document.getElementById('headerChapter').textContent = titles[viewName] || '';
 }
 
 // ── CHAPTER SWITCHING ────────────────────────────────────────────────────────
