@@ -63,7 +63,7 @@ Fixed to bottom of screen, always visible.
 
 ## Section 3: Shared Feedback System
 
-Applies to all drill exercises (sections 4-9).
+Applies to all drill exercises (sections 4-9, 11).
 
 ### When You Answer Wrong
 - Your answer shown in **red with strikethrough**
@@ -103,8 +103,8 @@ Key words in rule text are **bold + colored**. Pattern lines show all forms with
 - ett-noun: green `#1F8A4A`
 - Adjective: amber `#B8720A`
 - Preposition: magenta `#B8338A`
-- Particle: purple `#7028C8`
-- Pronoun: purple `#5E35B1`
+- Particle: deep purple `#7028C8`
+- Pronoun: indigo `#5E35B1`
 
 ---
 
@@ -379,6 +379,14 @@ The most important feature for the **oral exam** — trains producing full Swedi
 - **Level 1:** Short sentences, one grammar point (e.g. "Jag bor i Malmö.")
 - **Level 2:** Medium sentences, two grammar points (e.g. "Jag har bott i Malmö i tre år.")
 - **Level 3:** Complex sentences with bisatser, particles, pronouns (e.g. "Han sa att han hade laddat ner appen innan han åkte.")
+
+### Accepting Valid Alternatives
+Some sentences have multiple correct translations. The system should:
+- Accept known alternative answers (stored as an array of valid answers per sentence)
+- Be case-insensitive
+- Ignore minor punctuation differences
+- If the user's answer is valid but not the primary answer, show it in green with a note: "Also correct! The most common form is: ..."
+- All valid alternatives must be pre-verified, not dynamically generated
 
 ### Filtering
 By chapter, by grammar focus (verb tense / preposition / word order / pronoun), by difficulty level, weakest first.
