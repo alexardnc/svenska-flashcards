@@ -1164,12 +1164,11 @@ main {
         <div class="tool-card-desc">En/ett/plural, komparativ, superlativ</div>
         <div class="tool-card-mastery"><div class="tool-card-mastery-fill" style="width:0%"></div></div>
       </div>
-      <div class="tool-card disabled">
-        <div class="tool-card-coming">Coming soon</div>
+      <div class="tool-card" onclick="switchView('prep-drill')">
         <div class="tool-card-icon">&#x1F4CD;</div>
         <div class="tool-card-name">Prepositions</div>
         <div class="tool-card-desc">i, på, om, med, för, till in context</div>
-        <div class="tool-card-mastery"><div class="tool-card-mastery-fill" style="width:0%"></div></div>
+        <div class="tool-card-mastery"><div class="tool-card-mastery-fill" id="mastery-preps" style="width:0%"></div></div>
       </div>
       <div class="tool-card disabled">
         <div class="tool-card-coming">Coming soon</div>
@@ -1383,6 +1382,54 @@ main {
       <div class="score-detail" id="verbScoreDetail"></div>
       <div class="score-detail" id="verbWeakestForms"></div>
       <button class="drill-check-btn" style="margin-top:16px;max-width:240px" onclick="startVerbDrill()">Drill again &rarr;</button>
+      <button class="drill-next-btn" style="display:inline-block;margin-top:8px;max-width:240px" onclick="switchView('dashboard')">Back to Home</button>
+    </div>
+  </div>
+
+  <!-- PREPOSITION DRILL VIEW -->
+  <div id="view-prep-drill" class="view">
+    <div class="chapter-selector" id="prepChapterSelector"></div>
+    <div class="drill-filter" id="prepCategoryFilter"></div>
+
+    <div class="drill-progress">
+      <div class="drill-progress-bar">
+        <div class="drill-progress-fill" id="prepDrillProgress" style="width:0%"></div>
+      </div>
+      <span id="prepDrillCount">0 / 0</span>
+    </div>
+
+    <div id="prepDrillCard" style="width:100%">
+      <div class="drill-header">
+        <div class="drill-verb-word" id="prepSentence" style="color:var(--text);font-size:1.3rem"></div>
+        <div class="drill-verb-english" id="prepTranslation"></div>
+        <div class="drill-verb-group" id="prepCategory" style="background:#B8338A"></div>
+      </div>
+
+      <div class="drill-form-grid">
+        <div class="drill-form-row" data-form="preposition">
+          <div class="drill-form-label">Preposition</div>
+          <div style="flex:1">
+            <input class="drill-form-input" id="prepInput" autocomplete="off" spellcheck="false" autocapitalize="off" style="text-align:center;font-size:1.3rem">
+            <div class="drill-correct-answer" id="prepCorrectAnswer"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="drill-btn-row">
+        <button class="drill-check-btn" id="prepCheckBtn" onclick="checkPrepDrill()" style="background:#B8338A">Check</button>
+        <button class="drill-next-btn" id="prepNextBtn" onclick="nextPrepDrill()">Next &rarr;</button>
+      </div>
+
+      <button class="drill-why-btn" id="prepWhyBtn" style="display:none" onclick="togglePrepExplanation()">Why?</button>
+      <div class="drill-explanation" id="prepExplanation" style="border-left-color:#B8338A"></div>
+    </div>
+
+    <div class="drill-summary" id="prepDrillSummary" style="display:none">
+      <h2>Round Complete!</h2>
+      <div class="score-big" id="prepScoreBig" style="color:#B8338A"></div>
+      <div class="score-detail" id="prepScoreDetail"></div>
+      <div class="score-detail" id="prepWeakestCategory"></div>
+      <button class="drill-check-btn" style="margin-top:16px;max-width:240px;background:#B8338A" onclick="startPrepDrill()">Drill again &rarr;</button>
       <button class="drill-next-btn" style="display:inline-block;margin-top:8px;max-width:240px" onclick="switchView('dashboard')">Back to Home</button>
     </div>
   </div>
@@ -1809,7 +1856,8 @@ function switchView(viewName) {
   const titles = {
     dashboard: 'Svenska',
     flashcards: currentChapter === 'all' ? 'All Chapters' : CHAPTERS[currentChapter].title,
-    'verb-drill': 'Verb Drill'
+    'verb-drill': 'Verb Drill',
+    'prep-drill': 'Prepositions'
   };
   document.getElementById('headerChapter').textContent = titles[viewName] || '';
 
@@ -1821,6 +1869,11 @@ function switchView(viewName) {
     renderVerbChapterSelector();
     renderVerbGroupFilter();
     startVerbDrill();
+  }
+  if (viewName === 'prep-drill') {
+    renderPrepChapterSelector();
+    renderPrepCategoryFilter();
+    startPrepDrill();
   }
 }
 
@@ -1913,6 +1966,16 @@ function updateDashboard() {
     const pct = Math.round((correct / totalForms) * 100);
     const bar = document.getElementById('mastery-verbs');
     if (bar) bar.style.width = pct + '%';
+  }
+
+  // Prep drill mastery
+  const prepScores = loadPrepScores();
+  const totalPreps = PREP_SENTENCES.filter(s => currentChapter === 'all' || s.chapter === currentChapter || s.chapter === 'all').length;
+  if (totalPreps > 0) {
+    let prepCorrect = Object.values(prepScores).filter(Boolean).length;
+    const prepPct = Math.round((prepCorrect / totalPreps) * 100);
+    const prepBar = document.getElementById('mastery-preps');
+    if (prepBar) prepBar.style.width = prepPct + '%';
   }
 }
 
@@ -2339,6 +2402,400 @@ function renderVerbChapterSelector() {
       renderVerbChapterSelector();
       renderVerbGroupFilter();
       startVerbDrill();
+    });
+    container.appendChild(btn);
+  });
+}
+
+// ── PREPOSITION DRILL ────────────────────────────────────────────────────────
+
+const PREP_SENTENCES = [
+  // ── PLACE: i (cities, countries, regions) ──
+  {id:'p01', sentence:'Jag bor ___ Malmö.', translation:'I live in Malmö.', answer:'i', category:'place', rule:'place_i_city', chapter:9},
+  {id:'p02', sentence:'Hon bor ___ Sverige.', translation:'She lives in Sweden.', answer:'i', category:'place', rule:'place_i_country', chapter:9},
+  {id:'p03', sentence:'Elis bor ___ Falun.', translation:'Elis lives in Falun.', answer:'i', category:'place', rule:'place_i_city', chapter:9},
+  {id:'p04', sentence:'Vi bor ___ Dalarna.', translation:'We live in Dalarna.', answer:'i', category:'place', rule:'place_i_region', chapter:9},
+  {id:'p05', sentence:'Bokhandeln ligger ___ korsningen.', translation:'The bookshop is at the intersection.', answer:'i', category:'place', rule:'place_i_enclosed', chapter:9},
+  // ── PLACE: på (streets, squares, islands) ──
+  {id:'p06', sentence:'Peter bor ___ Storgatan.', translation:'Peter lives on Storgatan.', answer:'på', category:'place', rule:'place_på_street', chapter:9},
+  {id:'p07', sentence:'Kyrkan ligger ___ Stortorget.', translation:'The church is on Stortorget.', answer:'på', category:'place', rule:'place_på_square', chapter:9},
+  {id:'p08', sentence:'Olle har ett hus ___ Öland.', translation:'Olle has a house on Öland.', answer:'på', category:'place', rule:'place_på_island', chapter:9},
+  {id:'p09', sentence:'Hon arbetar ___ Sturegatan.', translation:'She works on Sturegatan.', answer:'på', category:'place', rule:'place_på_street', chapter:9},
+  {id:'p10', sentence:'Vi ses ___ Stortorget.', translation:'We\'ll meet at the main square.', answer:'på', category:'place', rule:'place_på_square', chapter:9},
+  // ── PLACE: vid (by/near) ──
+  {id:'p11', sentence:'Hotellet ligger ___ torget.', translation:'The hotel is by the square.', answer:'vid', category:'place', rule:'place_vid', chapter:9},
+  {id:'p12', sentence:'Sushirestaurangen ligger ___ optikern.', translation:'The sushi restaurant is by the optician.', answer:'vid', category:'place', rule:'place_vid', chapter:9},
+  // ── PLACE: mittemot, mellan ──
+  {id:'p13', sentence:'Mataffären ligger ___ hotellet.', translation:'The grocery store is across from the hotel.', answer:'mittemot', category:'place', rule:'place_mittemot', chapter:9},
+  {id:'p14', sentence:'Frisören ligger ___ skoaffären och bageriet.', translation:'The hairdresser is between the shoe shop and the bakery.', answer:'mellan', category:'place', rule:'place_mellan', chapter:9},
+  // ── PLACE: i vs på (tricky) ──
+  {id:'p15', sentence:'Många går ___ kyrkan på söndagar.', translation:'Many go to church on Sundays.', answer:'i', category:'place', rule:'place_i_kyrka', chapter:9},
+  {id:'p16', sentence:'Vi äter lunch ___ ett kafé.', translation:'We eat lunch at a café.', answer:'på', category:'place', rule:'place_på_venue', chapter:9},
+  {id:'p17', sentence:'Han jobbar ___ sjukhuset.', translation:'He works at the hospital.', answer:'på', category:'place', rule:'place_på_workplace', chapter:9},
+  // ── TIME: i (months, seasons) ──
+  {id:'p18', sentence:'Det är kallt ___ januari.', translation:'It\'s cold in January.', answer:'i', category:'time', rule:'time_i_month', chapter:8},
+  {id:'p19', sentence:'Vi badar ___ somras.', translation:'We swam last summer.', answer:'i', category:'time', rule:'time_i_season', chapter:8},
+  {id:'p20', sentence:'Jag åker hem ___ jul.', translation:'I\'m going home at Christmas.', answer:'i', category:'time', rule:'time_i_holiday', chapter:8},
+  // ── TIME: på (days, parts of day) ──
+  {id:'p21', sentence:'Vi ses ___ fredag.', translation:'We\'ll see each other on Friday.', answer:'på', category:'time', rule:'time_på_day', chapter:8},
+  {id:'p22', sentence:'Jag tränar ___ morgonen.', translation:'I exercise in the morning.', answer:'på', category:'time', rule:'time_på_partofday', chapter:8},
+  {id:'p23', sentence:'Han jobbar ___ kvällen.', translation:'He works in the evening.', answer:'på', category:'time', rule:'time_på_partofday', chapter:8},
+  {id:'p24', sentence:'Vi har lektion ___ tisdagar.', translation:'We have class on Tuesdays.', answer:'på', category:'time', rule:'time_på_day', chapter:8},
+  // ── TIME: om (future), för...sedan (past) ──
+  {id:'p25', sentence:'Jag åker hem ___ 10 dagar.', translation:'I\'m going home in 10 days.', answer:'om', category:'time', rule:'time_om_future', chapter:9},
+  {id:'p26', sentence:'Tåget går ___ en timme.', translation:'The train leaves in an hour.', answer:'om', category:'time', rule:'time_om_future', chapter:9},
+  {id:'p27', sentence:'Jag vandrade i Abisko ___ tre år sedan.', translation:'I hiked in Abisko three years ago.', answer:'för', category:'time', rule:'time_för_sedan', chapter:9},
+  {id:'p28', sentence:'Vi började ___ en timme sedan.', translation:'We started an hour ago.', answer:'för', category:'time', rule:'time_för_sedan', chapter:9},
+  // ── DIRECTION: till, från ──
+  {id:'p29', sentence:'Vi åker ___ Stockholm imorgon.', translation:'We\'re going to Stockholm tomorrow.', answer:'till', category:'direction', rule:'dir_till', chapter:9},
+  {id:'p30', sentence:'Hur kommer jag ___ busshållplatsen?', translation:'How do I get to the bus stop?', answer:'till', category:'direction', rule:'dir_till', chapter:9},
+  {id:'p31', sentence:'Tåget går ___ Malmö klockan tre.', translation:'The train goes from Malmö at three.', answer:'från', category:'direction', rule:'dir_från', chapter:9},
+  {id:'p32', sentence:'Hon kommer ___ Norge.', translation:'She comes from Norway.', answer:'från', category:'direction', rule:'dir_från', chapter:9},
+  // ── DIRECTION: hem vs hemma ──
+  {id:'p33', sentence:'Jag går ___ nu.', translation:'I\'m going home now.', answer:'hem', category:'direction', rule:'dir_hem', chapter:8},
+  {id:'p34', sentence:'Hon är ___ idag.', translation:'She is at home today.', answer:'hemma', category:'direction', rule:'dir_hemma', chapter:8},
+  // ── FIXED EXPRESSIONS ──
+  {id:'p35', sentence:'Vi ses ___ helgen!', translation:'See you on the weekend!', answer:'i', category:'fixed', rule:'fixed_i_helgen', chapter:8},
+  {id:'p36', sentence:'Hon drömmer ___ en resa till Japan.', translation:'She dreams of a trip to Japan.', answer:'om', category:'fixed', rule:'fixed_verb_om', chapter:9},
+  {id:'p37', sentence:'Jag pratar ___ min kompis.', translation:'I\'m talking to/with my friend.', answer:'med', category:'fixed', rule:'fixed_verb_med', chapter:7},
+  {id:'p38', sentence:'Han tittar ___ en film.', translation:'He\'s watching a movie.', answer:'på', category:'fixed', rule:'fixed_verb_på', chapter:7},
+  {id:'p39', sentence:'Jag tycker ___ dig.', translation:'I like you.', answer:'om', category:'fixed', rule:'fixed_tycka_om', chapter:11},
+  {id:'p40', sentence:'Vi träffades ___ en hundpromenad.', translation:'We met on a dog walk.', answer:'på', category:'fixed', rule:'fixed_på_activity', chapter:11},
+  {id:'p41', sentence:'Vad tycker du ___ filmen?', translation:'What do you think about the movie?', answer:'om', category:'fixed', rule:'fixed_verb_om', chapter:11},
+  {id:'p42', sentence:'Jag längtar ___ dig.', translation:'I miss/long for you.', answer:'efter', category:'fixed', rule:'fixed_verb_efter', chapter:9},
+  {id:'p43', sentence:'De är ___ en rundresa.', translation:'They are on a round trip.', answer:'på', category:'fixed', rule:'fixed_på_activity', chapter:9},
+  {id:'p44', sentence:'Bussen går ___ Centralen.', translation:'The bus goes to Centralen.', answer:'till', category:'direction', rule:'dir_till', chapter:9},
+  {id:'p45', sentence:'Kabeln är kopplad ___ datorn.', translation:'The cable is connected to the computer.', answer:'till', category:'fixed', rule:'fixed_verb_till', chapter:11},
+];
+
+const PREP_RULES = {
+  place_i_city:     { badge: 'Plats: i + stad', rule: 'Use <strong>i</strong> for cities.', examples: '<strong>i</strong> Malmö, <strong>i</strong> Stockholm, <strong>i</strong> Göteborg', tip: 'Cities, countries, and regions always take "i".' },
+  place_i_country:  { badge: 'Plats: i + land', rule: 'Use <strong>i</strong> for countries.', examples: '<strong>i</strong> Sverige, <strong>i</strong> Norge, <strong>i</strong> Japan', tip: 'Cities, countries, and regions always take "i".' },
+  place_i_region:   { badge: 'Plats: i + landskap', rule: 'Use <strong>i</strong> for regions/landscapes.', examples: '<strong>i</strong> Dalarna, <strong>i</strong> Skåne, <strong>i</strong> Lappland', tip: 'Cities, countries, and regions always take "i".' },
+  place_i_enclosed: { badge: 'Plats: i + enclosed', rule: 'Use <strong>i</strong> for enclosed locations and intersections.', examples: '<strong>i</strong> korsningen, <strong>i</strong> hörnet, <strong>i</strong> affären', tip: '"I" = inside/within an enclosed space.' },
+  place_i_kyrka:    { badge: 'Plats: i kyrkan', rule: 'Use <strong>i</strong> for church (<em>kyrkan</em>).', examples: '<strong>i</strong> kyrkan, <strong>i</strong> synagogan', tip: 'Exception: kyrka takes "i", but moské takes "på".' },
+  place_på_street:  { badge: 'Plats: på + gata', rule: 'Use <strong>på</strong> for streets.', examples: '<strong>på</strong> Storgatan, <strong>på</strong> Lillgatan, <strong>på</strong> Sturegatan', tip: 'Streets and roads always take "på".' },
+  place_på_square:  { badge: 'Plats: på + torg', rule: 'Use <strong>på</strong> for squares/plazas.', examples: '<strong>på</strong> Stortorget, <strong>på</strong> torget', tip: 'Open public spaces (squares) take "på".' },
+  place_på_island:  { badge: 'Plats: på + ö', rule: 'Use <strong>på</strong> for islands.', examples: '<strong>på</strong> Öland, <strong>på</strong> Gotland, <strong>på</strong> Djurgården', tip: 'Islands always take "på" — even when they\'re also countries.' },
+  place_på_venue:   { badge: 'Plats: på + venue', rule: 'Use <strong>på</strong> for cafés, restaurants, venues.', examples: '<strong>på</strong> kafé, <strong>på</strong> restaurangen, <strong>på</strong> bio', tip: 'Public venues and gathering places take "på".' },
+  place_på_workplace:{ badge: 'Plats: på + arbetsplats', rule: 'Use <strong>på</strong> for workplaces.', examples: '<strong>på</strong> sjukhuset, <strong>på</strong> kontoret, <strong>på</strong> jobbet', tip: 'Workplaces and institutions take "på".' },
+  place_vid:        { badge: 'Plats: vid', rule: 'Use <strong>vid</strong> for "by/near/beside".', examples: '<strong>vid</strong> torget, <strong>vid</strong> havet, <strong>vid</strong> stationen', tip: '"Vid" = physically near, beside, adjacent to.' },
+  place_mittemot:   { badge: 'Plats: mittemot', rule: 'Use <strong>mittemot</strong> for "across from/opposite".', examples: '<strong>mittemot</strong> hotellet, <strong>mittemot</strong> skolan', tip: '"Mittemot" = directly facing, on the other side.' },
+  place_mellan:     { badge: 'Plats: mellan', rule: 'Use <strong>mellan</strong> for "between" two things.', examples: '<strong>mellan</strong> A och B, <strong>mellan</strong> kl 9 och 12', tip: '"Mellan" always needs two reference points.' },
+  time_i_month:     { badge: 'Tid: i + månad', rule: 'Use <strong>i</strong> for months.', examples: '<strong>i</strong> januari, <strong>i</strong> mars, <strong>i</strong> december', tip: 'Months and seasons take "i".' },
+  time_i_season:    { badge: 'Tid: i + årstid', rule: 'Use <strong>i</strong> for seasons.', examples: '<strong>i</strong> somras, <strong>i</strong> vintras, <strong>i</strong> höstas', tip: 'Past seasons: i + season + -as (i somras = last summer).' },
+  time_i_holiday:   { badge: 'Tid: i + högtid', rule: 'Use <strong>i</strong> for holidays/periods.', examples: '<strong>i</strong> jul, <strong>i</strong> påsk, <strong>i</strong> sommar', tip: 'Holidays and named periods take "i".' },
+  time_på_day:      { badge: 'Tid: på + dag', rule: 'Use <strong>på</strong> for days of the week.', examples: '<strong>på</strong> måndag, <strong>på</strong> fredag, <strong>på</strong> lördagar', tip: 'Days of the week always take "på".' },
+  time_på_partofday:{ badge: 'Tid: på + tid på dygnet', rule: 'Use <strong>på</strong> for parts of the day.', examples: '<strong>på</strong> morgonen, <strong>på</strong> kvällen, <strong>på</strong> natten', tip: 'Parts of day: på morgonen, på dagen, på kvällen, på natten.' },
+  time_om_future:   { badge: 'Tid: om + framtid', rule: 'Use <strong>om</strong> for "in X time" (future).', examples: '<strong>om</strong> en timme, <strong>om</strong> 10 dagar, <strong>om</strong> en vecka', tip: '"Om" + time period = in X time from now (future).' },
+  time_för_sedan:   { badge: 'Tid: för...sedan', rule: 'Use <strong>för</strong> ... <strong>sedan</strong> for "X time ago" (past).', examples: '<strong>för</strong> en timme <strong>sedan</strong>, <strong>för</strong> tre år <strong>sedan</strong>', tip: '"För" wraps around the time: för + period + sedan.' },
+  dir_till:         { badge: 'Riktning: till', rule: 'Use <strong>till</strong> for direction "to".', examples: '<strong>till</strong> Stockholm, <strong>till</strong> jobbet, <strong>till</strong> skolan', tip: '"Till" = movement toward a destination.' },
+  dir_från:         { badge: 'Riktning: från', rule: 'Use <strong>från</strong> for "from".', examples: '<strong>från</strong> Malmö, <strong>från</strong> Norge, <strong>från</strong> jobbet', tip: '"Från" = origin/starting point.' },
+  dir_hem:          { badge: 'Riktning: hem', rule: 'Use <strong>hem</strong> for direction (going home).', examples: 'Jag går <strong>hem</strong>. Hon åker <strong>hem</strong>.', tip: '"Hem" = movement toward home. "Hemma" = already at home.' },
+  dir_hemma:        { badge: 'Plats: hemma', rule: 'Use <strong>hemma</strong> for location (at home).', examples: 'Hon är <strong>hemma</strong>. Vi stannar <strong>hemma</strong>.', tip: '"Hemma" = being at home (position). "Hem" = going home (direction).' },
+  fixed_i_helgen:   { badge: 'Fast uttryck: i helgen', rule: '<strong>I helgen</strong> = on/during the weekend.', examples: '<strong>i</strong> helgen, <strong>i</strong> morse, <strong>i</strong> natt', tip: 'Fixed time expressions: i helgen, i morse, i förrgår.' },
+  fixed_verb_om:    { badge: 'Verb + om', rule: 'Some verbs take the fixed preposition <strong>om</strong>.', examples: 'drömma <strong>om</strong>, tycka <strong>om</strong>, berätta <strong>om</strong>', tip: 'Verb + preposition combos must be memorized. "Om" = about/of.' },
+  fixed_tycka_om:   { badge: 'tycka om = to like', rule: '<strong>tycka om</strong> = to like. ⚠️ tycka (alone) = to think/find.', examples: 'Jag <strong>tycker om</strong> dig = I like you', tip: 'Critical distinction: tycka ≠ tycka om!' },
+  fixed_verb_med:   { badge: 'Verb + med', rule: 'Some verbs take the fixed preposition <strong>med</strong>.', examples: 'prata <strong>med</strong>, träffas <strong>med</strong>, hjälpa <strong>med</strong>', tip: '"Med" = with. prata med = talk to/with.' },
+  fixed_verb_på:    { badge: 'Verb + på', rule: 'Some verbs take the fixed preposition <strong>på</strong>.', examples: 'titta <strong>på</strong>, lyssna <strong>på</strong>, vänta <strong>på</strong>', tip: '"På" with verbs: titta på = look at, lyssna på = listen to.' },
+  fixed_verb_efter: { badge: 'Verb + efter', rule: 'Some verbs take the fixed preposition <strong>efter</strong>.', examples: 'längta <strong>efter</strong>, söka <strong>efter</strong>, fråga <strong>efter</strong>', tip: '"Efter" = after/for. längta efter = long for/miss.' },
+  fixed_på_activity:{ badge: 'på + aktivitet', rule: 'Use <strong>på</strong> for activities and trips.', examples: '<strong>på</strong> en promenad, <strong>på</strong> en rundresa, <strong>på</strong> dejt', tip: '"På" for activities you go on or are doing.' },
+  fixed_verb_till:  { badge: 'Verb + till', rule: 'Some verbs take the fixed preposition <strong>till</strong>.', examples: 'kopplad <strong>till</strong>, ansluten <strong>till</strong>, gift med', tip: '"Till" with connection verbs: connected to, linked to.' },
+};
+
+const PREP_CATEGORY_LABELS = { place: 'Place', time: 'Time', direction: 'Direction', fixed: 'Fixed' };
+const PREP_CATEGORY_COLORS = { place: '#2065B8', time: '#B8720A', direction: '#1F8A4A', fixed: '#B8338A' };
+
+function loadPrepScores() {
+  if (currentChapter === 'all') {
+    let merged = {};
+    Object.keys(CHAPTERS).forEach(num => {
+      const saved = localStorage.getItem(`svenska_ch${num}_prep_scores`);
+      if (saved) Object.assign(merged, JSON.parse(saved));
+    });
+    // Also load 'all' key
+    const savedAll = localStorage.getItem('svenska_chall_prep_scores');
+    if (savedAll) Object.assign(merged, JSON.parse(savedAll));
+    return merged;
+  }
+  const saved = localStorage.getItem(`svenska_ch${currentChapter}_prep_scores`);
+  return saved ? JSON.parse(saved) : {};
+}
+
+function savePrepScore(sentenceId, isCorrect) {
+  // Find which chapter this sentence belongs to
+  const s = PREP_SENTENCES.find(x => x.id === sentenceId);
+  const ch = s ? s.chapter : currentChapter;
+  const key = `svenska_ch${ch}_prep_scores`;
+  const scores = JSON.parse(localStorage.getItem(key) || '{}');
+  scores[sentenceId] = isCorrect;
+  localStorage.setItem(key, JSON.stringify(scores));
+}
+
+function getPrepSentencesForDrill() {
+  if (currentChapter === 'all') return [...PREP_SENTENCES];
+  return PREP_SENTENCES.filter(s => s.chapter === currentChapter || s.chapter === 'all');
+}
+
+let prepDrillSentences = [];
+let prepDrillIndex = 0;
+let prepDrillResults = [];
+let prepCategoryFilter = 'all';
+
+function startPrepDrill() {
+  let sentences = getPrepSentencesForDrill();
+  if (sentences.length === 0) {
+    document.getElementById('prepDrillCard').innerHTML = '<p style="text-align:center;color:var(--subtext);padding:32px 0">No preposition sentences for this chapter.</p>';
+    document.getElementById('prepDrillSummary').style.display = 'none';
+    return;
+  }
+
+  if (prepCategoryFilter !== 'all') {
+    sentences = sentences.filter(s => s.category === prepCategoryFilter);
+    if (sentences.length === 0) {
+      document.getElementById('prepDrillCard').innerHTML = '<p style="text-align:center;color:var(--subtext);padding:32px 0">No sentences in this category.</p>';
+      document.getElementById('prepDrillSummary').style.display = 'none';
+      return;
+    }
+  }
+
+  // Weakest first
+  const scores = loadPrepScores();
+  sentences.sort((a, b) => {
+    const sa = scores[a.id] === true ? 1 : 0;
+    const sb = scores[b.id] === true ? 1 : 0;
+    return sa - sb;
+  });
+
+  prepDrillSentences = sentences;
+  prepDrillIndex = 0;
+  prepDrillResults = [];
+
+  document.getElementById('prepDrillCard').style.display = '';
+  document.getElementById('prepDrillSummary').style.display = 'none';
+  showPrepDrillCard();
+}
+
+function showPrepDrillCard() {
+  const s = prepDrillSentences[prepDrillIndex];
+  if (!s) return;
+
+  // Show sentence with blank
+  const display = s.sentence.replace('___', '<span style="display:inline-block;width:60px;border-bottom:3px solid #B8338A;margin:0 4px"></span>');
+  document.getElementById('prepSentence').innerHTML = display;
+  document.getElementById('prepTranslation').textContent = s.translation;
+
+  const catColor = PREP_CATEGORY_COLORS[s.category] || '#B8338A';
+  const catEl = document.getElementById('prepCategory');
+  catEl.textContent = PREP_CATEGORY_LABELS[s.category] || s.category;
+  catEl.style.background = catColor;
+
+  const pct = Math.round((prepDrillIndex / prepDrillSentences.length) * 100);
+  document.getElementById('prepDrillProgress').style.width = pct + '%';
+  document.getElementById('prepDrillCount').textContent = `${prepDrillIndex + 1} / ${prepDrillSentences.length}`;
+
+  const input = document.getElementById('prepInput');
+  input.value = '';
+  input.className = 'drill-form-input';
+  input.disabled = false;
+  input.style.borderColor = '';
+  const row = input.closest('.drill-form-row');
+  row.classList.remove('has-error');
+  document.getElementById('prepCorrectAnswer').style.display = 'none';
+
+  document.getElementById('prepCheckBtn').style.display = '';
+  document.getElementById('prepCheckBtn').disabled = false;
+  document.getElementById('prepNextBtn').style.display = 'none';
+  document.getElementById('prepWhyBtn').style.display = 'none';
+  document.getElementById('prepExplanation').classList.remove('visible');
+
+  input.focus();
+}
+
+function checkPrepDrill() {
+  const s = prepDrillSentences[prepDrillIndex];
+  const input = document.getElementById('prepInput');
+  const userAnswer = input.value.trim().toLowerCase();
+  const correctAnswer = s.answer.toLowerCase();
+
+  const isCorrect = userAnswer === correctAnswer;
+  input.disabled = true;
+
+  if (isCorrect) {
+    input.classList.add('correct');
+    input.style.borderColor = '#1F8A4A';
+  } else {
+    input.classList.add('incorrect');
+    input.style.borderColor = '#C03018';
+    const row = input.closest('.drill-form-row');
+    row.classList.add('has-error');
+    const correctEl = document.getElementById('prepCorrectAnswer');
+    correctEl.textContent = s.answer;
+    correctEl.style.display = 'block';
+  }
+
+  prepDrillResults.push({ id: s.id, correct: isCorrect, category: s.category });
+  savePrepScore(s.id, isCorrect);
+
+  document.getElementById('prepCheckBtn').style.display = 'none';
+  document.getElementById('prepNextBtn').style.display = '';
+
+  if (!isCorrect) {
+    showPrepExplanation(s);
+  } else {
+    document.getElementById('prepWhyBtn').style.display = '';
+  }
+}
+
+function nextPrepDrill() {
+  prepDrillIndex++;
+  if (prepDrillIndex >= prepDrillSentences.length) {
+    showPrepDrillSummary();
+  } else {
+    showPrepDrillCard();
+  }
+}
+
+function showPrepExplanation(s) {
+  const el = document.getElementById('prepExplanation');
+  const rule = PREP_RULES[s.rule];
+  if (!rule) { el.classList.remove('visible'); return; }
+
+  const catColor = PREP_CATEGORY_COLORS[s.category] || '#B8338A';
+  el.style.borderLeftColor = catColor;
+
+  el.innerHTML = `
+    <div class="rule-badge" style="background:${catColor}">${rule.badge}</div>
+    <div class="why-text" style="margin-top:8px">${rule.rule}</div>
+    <div class="pattern-line" style="margin:8px 0">${rule.examples}</div>
+    ${rule.tip ? `<div class="tip">${rule.tip}</div>` : ''}
+  `;
+  el.classList.add('visible');
+}
+
+function togglePrepExplanation() {
+  const el = document.getElementById('prepExplanation');
+  if (el.classList.contains('visible')) {
+    el.classList.remove('visible');
+  } else {
+    showPrepExplanation(prepDrillSentences[prepDrillIndex]);
+  }
+}
+
+function showPrepDrillSummary() {
+  document.getElementById('prepDrillCard').style.display = 'none';
+  document.getElementById('prepDrillSummary').style.display = '';
+
+  const total = prepDrillResults.length;
+  const correct = prepDrillResults.filter(r => r.correct).length;
+  const pct = Math.round((correct / total) * 100);
+
+  document.getElementById('prepScoreBig').textContent = pct + '%';
+  document.getElementById('prepScoreDetail').textContent = `${correct} / ${total} correct`;
+
+  // Find weakest category
+  const catTotals = {};
+  const catCorrect = {};
+  prepDrillResults.forEach(r => {
+    catTotals[r.category] = (catTotals[r.category] || 0) + 1;
+    if (r.correct) catCorrect[r.category] = (catCorrect[r.category] || 0) + 1;
+  });
+  let weakest = null;
+  let weakestPct = 100;
+  Object.keys(catTotals).forEach(cat => {
+    const p = Math.round(((catCorrect[cat] || 0) / catTotals[cat]) * 100);
+    if (p < weakestPct) { weakestPct = p; weakest = cat; }
+  });
+
+  if (weakest && weakestPct < 100) {
+    document.getElementById('prepWeakestCategory').textContent = `Weakest: ${PREP_CATEGORY_LABELS[weakest] || weakest} (${weakestPct}%)`;
+  } else {
+    document.getElementById('prepWeakestCategory').textContent = 'All categories strong!';
+  }
+
+  document.getElementById('prepDrillProgress').style.width = '100%';
+}
+
+// Enter key for prep drill
+document.getElementById('view-prep-drill').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const checkBtn = document.getElementById('prepCheckBtn');
+    const nextBtn = document.getElementById('prepNextBtn');
+    if (checkBtn.style.display !== 'none' && !checkBtn.disabled) {
+      checkPrepDrill();
+    } else if (nextBtn.style.display !== 'none') {
+      nextPrepDrill();
+    }
+  }
+});
+
+function renderPrepCategoryFilter() {
+  const container = document.getElementById('prepCategoryFilter');
+  if (!container) return;
+
+  const sentences = getPrepSentencesForDrill();
+  const cats = [...new Set(sentences.map(s => s.category))].sort();
+
+  container.innerHTML = '';
+
+  const allBtn = document.createElement('button');
+  allBtn.className = 'filter-tab' + (prepCategoryFilter === 'all' ? ' active' : '');
+  allBtn.style.cssText = prepCategoryFilter === 'all' ? 'background:#B8338A;border-color:#B8338A;color:white' : '';
+  allBtn.textContent = `All (${sentences.length})`;
+  allBtn.addEventListener('click', () => { prepCategoryFilter = 'all'; renderPrepCategoryFilter(); startPrepDrill(); });
+  container.appendChild(allBtn);
+
+  cats.forEach(cat => {
+    const count = sentences.filter(s => s.category === cat).length;
+    const btn = document.createElement('button');
+    btn.className = 'filter-tab' + (prepCategoryFilter === cat ? ' active' : '');
+    const color = PREP_CATEGORY_COLORS[cat] || '#B8338A';
+    btn.style.cssText = prepCategoryFilter === cat ? `background:${color};border-color:${color};color:white` : '';
+    btn.textContent = `${PREP_CATEGORY_LABELS[cat] || cat} (${count})`;
+    btn.addEventListener('click', () => { prepCategoryFilter = cat; renderPrepCategoryFilter(); startPrepDrill(); });
+    container.appendChild(btn);
+  });
+}
+
+function renderPrepChapterSelector() {
+  const container = document.getElementById('prepChapterSelector');
+  if (!container) return;
+  container.innerHTML = '';
+
+  // All button
+  const allPrepCount = PREP_SENTENCES.length;
+  const allBtn = document.createElement('button');
+  allBtn.className = 'chapter-btn' + (currentChapter === 'all' ? ' active' : '');
+  allBtn.dataset.chapter = 'all';
+  allBtn.innerHTML = `
+    <div class="chapter-btn-num">All</div>
+    <div class="chapter-btn-label">Combined</div>
+    <div class="chapter-btn-count">${allPrepCount} sentences</div>
+  `;
+  allBtn.addEventListener('click', () => {
+    switchChapter('all');
+    renderPrepChapterSelector();
+    renderPrepCategoryFilter();
+    startPrepDrill();
+  });
+  container.appendChild(allBtn);
+
+  Object.values(CHAPTERS).forEach(ch => {
+    const prepCount = PREP_SENTENCES.filter(s => s.chapter === ch.num).length;
+    const btn = document.createElement('button');
+    btn.className = 'chapter-btn' + (ch.num === currentChapter ? ' active' : '');
+    btn.dataset.chapter = ch.num;
+    btn.innerHTML = `
+      <div class="chapter-btn-num">${ch.num}</div>
+      <div class="chapter-btn-label">${ch.subtitle}</div>
+      <div class="chapter-btn-count">${prepCount} sentences</div>
+    `;
+    btn.addEventListener('click', () => {
+      switchChapter(ch.num);
+      renderPrepChapterSelector();
+      renderPrepCategoryFilter();
+      startPrepDrill();
     });
     container.appendChild(btn);
   });
