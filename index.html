@@ -1125,6 +1125,65 @@ main {
 }
 .drill-nav-btn:hover { background: var(--card-bg); border-color: var(--text); }
 .drill-nav-btn:active { transform: scale(0.97); }
+
+/* ── DRILL SWITCHER TABS (persistent prev/next nav) ── */
+.drill-switcher {
+  width: 100%;
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1.5px solid var(--border);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.drill-switcher::-webkit-scrollbar { display: none; }
+.drill-switch-tab {
+  flex: 1;
+  min-width: 84px;
+  padding: 9px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--card-bg);
+  color: var(--subtext);
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.drill-switch-tab:hover { background: var(--bg2); color: var(--text); }
+.drill-switch-tab.active {
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+}
+
+/* Prep drill: hide the "Preposition" label and center the input */
+#view-prep-drill .drill-form-label { display: none; }
+#view-prep-drill .drill-form-row { justify-content: center; }
+#view-prep-drill .drill-form-row > div[style*="flex:1"] {
+  max-width: 360px;
+  width: 100%;
+}
+
+/* Mobile polish */
+@media (max-width: 600px) {
+  .drill-switcher { gap: 4px; padding-bottom: 8px; margin-bottom: 10px; }
+  .drill-switch-tab { font-size: 0.72rem; padding: 8px 7px; min-width: 72px; }
+  .drill-nav-btn { font-size: 0.75rem; padding: 9px 8px; }
+  .drill-verb-word { font-size: 1.5rem; }
+  .drill-form-label { width: 76px; font-size: 0.7rem; }
+  .drill-form-input { font-size: 1rem; padding: 9px 11px; }
+  #view-prep-drill .drill-verb-word { font-size: 1.15rem; }
+  .drill-btn-row { flex-wrap: wrap; }
+}
 </style>
 </head>
 <body>
@@ -1225,6 +1284,11 @@ main {
 
   <!-- FLASHCARDS VIEW (existing content) -->
   <div id="view-flashcards" class="view active">
+  <div class="drill-switcher">
+    <button class="drill-switch-tab" data-drill="flashcards" onclick="switchView('flashcards')">&#x1F0CF; Cards</button>
+    <button class="drill-switch-tab" data-drill="verb-drill" onclick="switchView('verb-drill')">&#x1F525; Verbs</button>
+    <button class="drill-switch-tab" data-drill="prep-drill" onclick="switchView('prep-drill')">&#x1F4CD; Preps</button>
+  </div>
   <!-- Chapter selector -->
   <div class="chapter-selector" id="chapterSelector"></div>
 
@@ -1335,6 +1399,11 @@ main {
 
   <!-- VERB DRILL VIEW -->
   <div id="view-verb-drill" class="view">
+    <div class="drill-switcher">
+      <button class="drill-switch-tab" data-drill="flashcards" onclick="switchView('flashcards')">&#x1F0CF; Cards</button>
+      <button class="drill-switch-tab" data-drill="verb-drill" onclick="switchView('verb-drill')">&#x1F525; Verbs</button>
+      <button class="drill-switch-tab" data-drill="prep-drill" onclick="switchView('prep-drill')">&#x1F4CD; Preps</button>
+    </div>
     <div class="chapter-selector" id="verbChapterSelector"></div>
     <div class="drill-filter" id="verbGroupFilter"></div>
 
@@ -1414,6 +1483,11 @@ main {
 
   <!-- PREPOSITION DRILL VIEW -->
   <div id="view-prep-drill" class="view">
+    <div class="drill-switcher">
+      <button class="drill-switch-tab" data-drill="flashcards" onclick="switchView('flashcards')">&#x1F0CF; Cards</button>
+      <button class="drill-switch-tab" data-drill="verb-drill" onclick="switchView('verb-drill')">&#x1F525; Verbs</button>
+      <button class="drill-switch-tab" data-drill="prep-drill" onclick="switchView('prep-drill')">&#x1F4CD; Preps</button>
+    </div>
     <div class="chapter-selector" id="prepChapterSelector"></div>
     <div class="drill-filter" id="prepCategoryFilter"></div>
 
@@ -1880,6 +1954,11 @@ function switchView(viewName) {
   // Update bottom nav active state
   document.querySelectorAll('.bottom-nav-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.view === viewName);
+  });
+
+  // Update drill switcher active tab
+  document.querySelectorAll('.drill-switch-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.drill === viewName);
   });
 
   // Update header title based on view
