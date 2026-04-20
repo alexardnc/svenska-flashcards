@@ -1181,13 +1181,21 @@ main {
   border-color: var(--text);
 }
 
-/* Prep drill: hide the "Preposition" label and center the input */
+/* Prep drill: hide the "Preposition" label and center the input + button row */
 #view-prep-drill .drill-form-label { display: none; }
 #view-prep-drill .drill-form-row { justify-content: center; }
 #view-prep-drill .drill-form-row > div[style*="flex:1"] {
   max-width: 360px;
   width: 100%;
 }
+#view-prep-drill .drill-btn-row,
+#view-prep-drill .drill-explanation {
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+}
+#view-prep-drill #prepDrillCard { text-align: center; }
+#view-prep-drill .drill-btn-row { text-align: left; }
 
 /* Mobile polish */
 @media (max-width: 600px) {
@@ -1198,7 +1206,10 @@ main {
   .drill-form-label { width: 76px; font-size: 0.7rem; }
   .drill-form-input { font-size: 1rem; padding: 9px 11px; }
   #view-prep-drill .drill-verb-word { font-size: 1.15rem; }
-  .drill-btn-row { flex-wrap: wrap; }
+  .drill-btn-row { gap: 8px; }
+  .drill-check-btn, .drill-next-btn { padding: 13px 10px; font-size: 0.85rem; }
+  .drill-prev-btn { flex: 0 0 44px; padding: 13px 0; font-size: 1rem; }
+  #view-prep-drill .drill-form-input { text-align: center; }
 }
 </style>
 </head>
@@ -2285,12 +2296,12 @@ function checkVerbDrill() {
   saveVerbScore(verb.id, results);
 
   document.getElementById('verbCheckBtn').style.display = 'none';
-  document.getElementById('verbNextBtn').style.display = '';
+  document.getElementById('verbNextBtn').style.display = 'block';
 
   if (hasError) {
     showVerbExplanation(verb);
   } else {
-    document.getElementById('verbWhyBtn').style.display = '';
+    document.getElementById('verbWhyBtn').style.display = 'inline-block';
   }
 }
 
@@ -2778,12 +2789,12 @@ function checkPrepDrill() {
   savePrepScore(s.id, isCorrect);
 
   document.getElementById('prepCheckBtn').style.display = 'none';
-  document.getElementById('prepNextBtn').style.display = '';
+  document.getElementById('prepNextBtn').style.display = 'block';
 
   if (!isCorrect) {
     showPrepExplanation(s);
   } else {
-    document.getElementById('prepWhyBtn').style.display = '';
+    document.getElementById('prepWhyBtn').style.display = 'inline-block';
   }
 }
 
