@@ -1103,6 +1103,28 @@ main {
   gap: 5px;
   flex-wrap: wrap;
 }
+.drill-nav-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: 14px auto 4px;
+  max-width: 320px;
+}
+.drill-nav-btn {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.drill-nav-btn:hover { background: var(--card-bg); border-color: var(--text); }
+.drill-nav-btn:active { transform: scale(0.97); }
 </style>
 </head>
 <body>
@@ -1381,6 +1403,10 @@ main {
       <div class="score-big" id="verbScoreBig"></div>
       <div class="score-detail" id="verbScoreDetail"></div>
       <div class="score-detail" id="verbWeakestForms"></div>
+      <div class="drill-nav-row">
+        <button class="drill-nav-btn" onclick="switchView('flashcards')">&larr; Flashcards</button>
+        <button class="drill-nav-btn" onclick="switchView('prep-drill')">Prepositions &rarr;</button>
+      </div>
       <button class="drill-check-btn" style="margin-top:16px;max-width:240px" onclick="startVerbDrill()">Drill again &rarr;</button>
       <button class="drill-next-btn" style="display:inline-block;margin-top:8px;max-width:240px" onclick="switchView('dashboard')">Back to Home</button>
     </div>
@@ -1429,6 +1455,10 @@ main {
       <div class="score-big" id="prepScoreBig" style="color:#B8338A"></div>
       <div class="score-detail" id="prepScoreDetail"></div>
       <div class="score-detail" id="prepWeakestCategory"></div>
+      <div class="drill-nav-row">
+        <button class="drill-nav-btn" onclick="switchView('verb-drill')">&larr; Verb Drill</button>
+        <button class="drill-nav-btn" onclick="switchView('flashcards')">Flashcards &rarr;</button>
+      </div>
       <button class="drill-check-btn" style="margin-top:16px;max-width:240px;background:#B8338A" onclick="startPrepDrill()">Drill again &rarr;</button>
       <button class="drill-next-btn" style="display:inline-block;margin-top:8px;max-width:240px" onclick="switchView('dashboard')">Back to Home</button>
     </div>
