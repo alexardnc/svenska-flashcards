@@ -1014,6 +1014,22 @@ main {
   display: none;
 }
 .drill-next-btn:active { transform: scale(0.97); }
+.drill-prev-btn {
+  flex: 0 0 54px;
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--subtext);
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.drill-prev-btn:hover:not(:disabled) { background: var(--bg2); color: var(--text); border-color: var(--text); }
+.drill-prev-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.drill-prev-btn:active:not(:disabled) { transform: scale(0.97); }
 .drill-why-btn {
   background: none;
   border: 1px solid var(--border);
@@ -1459,6 +1475,7 @@ main {
       </div>
 
       <div class="drill-btn-row">
+        <button class="drill-prev-btn" id="verbPrevBtn" onclick="prevVerbDrill()" aria-label="Previous verb" title="Previous verb">&larr;</button>
         <button class="drill-check-btn" id="verbCheckBtn" onclick="checkVerbDrill()">Check</button>
         <button class="drill-next-btn" id="verbNextBtn" onclick="nextVerbDrill()">Next &rarr;</button>
       </div>
@@ -1516,6 +1533,7 @@ main {
       </div>
 
       <div class="drill-btn-row">
+        <button class="drill-prev-btn" id="prepPrevBtn" onclick="prevPrepDrill()" aria-label="Previous sentence" title="Previous sentence">&larr;</button>
         <button class="drill-check-btn" id="prepCheckBtn" onclick="checkPrepDrill()" style="background:#B8338A">Check</button>
         <button class="drill-next-btn" id="prepNextBtn" onclick="nextPrepDrill()">Next &rarr;</button>
       </div>
@@ -2218,7 +2236,17 @@ function showVerbDrillCard() {
   document.getElementById('verbWhyBtn').style.display = 'none';
   document.getElementById('verbExplanation').classList.remove('visible');
 
+  const prevBtn = document.getElementById('verbPrevBtn');
+  if (prevBtn) prevBtn.disabled = verbDrillIndex === 0;
+
   document.getElementById('drillImperativ').focus();
+}
+
+function prevVerbDrill() {
+  if (verbDrillIndex > 0) {
+    verbDrillIndex--;
+    showVerbDrillCard();
+  }
 }
 
 function checkVerbDrill() {
@@ -2718,6 +2746,9 @@ function showPrepDrillCard() {
   document.getElementById('prepWhyBtn').style.display = 'none';
   document.getElementById('prepExplanation').classList.remove('visible');
 
+  const prevBtn = document.getElementById('prepPrevBtn');
+  if (prevBtn) prevBtn.disabled = prepDrillIndex === 0;
+
   input.focus();
 }
 
@@ -2761,6 +2792,13 @@ function nextPrepDrill() {
   if (prepDrillIndex >= prepDrillSentences.length) {
     showPrepDrillSummary();
   } else {
+    showPrepDrillCard();
+  }
+}
+
+function prevPrepDrill() {
+  if (prepDrillIndex > 0) {
+    prepDrillIndex--;
     showPrepDrillCard();
   }
 }
