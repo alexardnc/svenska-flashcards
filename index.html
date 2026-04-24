@@ -470,6 +470,54 @@ main {
   flex: 1;
   font-family: 'Fraunces', serif;
 }
+.form-speak-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  opacity: 0.8;
+  flex-shrink: 0;
+  transition: opacity 0.15s, transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+.form-speak-btn svg { width: 16px; height: 16px; }
+.form-speak-btn:hover, .form-speak-btn:active { opacity: 1; transform: scale(1.1); }
+.form-speak-btn.speaking { opacity: 1; animation: pulseSpeak 0.8s ease-in-out infinite; }
+@keyframes pulseSpeak {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+.play-all-forms-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0 4px;
+  padding: 7px 14px;
+  background: none;
+  border: 2px solid var(--border);
+  border-radius: 50px;
+  color: var(--subtext);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.play-all-forms-btn svg { width: 14px; height: 14px; }
+.play-all-forms-btn:hover, .play-all-forms-btn:active {
+  border-color: currentColor;
+  color: var(--text);
+}
+.play-all-forms-btn.speaking {
+  background: var(--text);
+  color: var(--card-bg);
+  border-color: var(--text);
+}
 
 .card-note {
   font-size: 0.85rem;
@@ -1660,6 +1708,8 @@ const TYPE_COLORS = {
 
 // Colors for form positions (0=type color, 1,2,3 fixed)
 const FORM_POS_COLORS = [null, '#0A818A', '#7028C8', '#B56008'];
+// Extra color for the 5th verb row (imperativ) — magenta, matches the drill palette
+const VERB_IMPERATIV_COLOR = '#B8338A';
 
 const DECO_LABELS = {
   noun_en: 'N·EN', noun_ett: 'N·ETT', adjective: 'ADJ',
@@ -1679,6 +1729,25 @@ function speak(text, btnEl) {
     utter.onerror = () => btnEl.classList.remove('speaking');
   }
   window.speechSynthesis.speak(utter);
+}
+
+// Speak a list of Swedish texts one after another (used by "play all forms")
+function speakSequence(texts, btnEl) {
+  if (!window.speechSynthesis) { alert('Speech not supported in this browser.'); return; }
+  window.speechSynthesis.cancel();
+  if (btnEl) btnEl.classList.add('speaking');
+  const clear = () => { if (btnEl) btnEl.classList.remove('speaking'); };
+  let i = 0;
+  const speakNext = () => {
+    if (i >= texts.length) { clear(); return; }
+    const utter = new SpeechSynthesisUtterance(texts[i]);
+    utter.lang = 'sv-SE';
+    utter.rate = 0.85; // slightly slower for sequenced listening
+    utter.onend = () => { i++; speakNext(); };
+    utter.onerror = clear;
+    window.speechSynthesis.speak(utter);
+  };
+  speakNext();
 }
 
 const WEIGHT_MAP = { 0:4, 1:6, 2:5, 3:3, 4:2, 5:1 };
@@ -1814,9 +1883,10 @@ function showCard() {
   beh.style.color = color;
   document.getElementById('cardEmojiBack').textContent = card.emoji || '';
 
-  // Back primary word — in type color
+  // Back primary word — in type color. Verbs get "att" prefix on the infinitive.
   const bp = document.getElementById('backPrimary');
-  bp.textContent = card.back.primary;
+  const primaryDisplay = card.type === 'verb' ? 'att ' + card.back.primary : card.back.primary;
+  bp.textContent = primaryDisplay;
   bp.style.color = color;
 
   // Plural group tag
@@ -1843,28 +1913,76 @@ function showCard() {
   } else if (card.back.forms && card.back.forms.length) {
     const grid = document.createElement('div');
     grid.className = 'card-forms-table';
-    card.back.forms.forEach((form, i) => {
-      const rowColor = FORM_POS_COLORS[i] || color;
+    const isVerb = card.type === 'verb';
+
+    // Build the row list. Verbs show 5 rows: imperativ, infinitiv, presens, preteritum, supinum.
+    // imperativ is derived from the infinitive + verb group (same logic as the verb drill).
+    let rowSpecs;
+    if (isVerb) {
+      const gInfo = parseVerbGroup(card.back.note);
+      const infinitiv = card.back.forms[0];
+      const imperativ = deriveImperativ(infinitiv, gInfo.group);
+      rowSpecs = [
+        { label: 'imperativ',  display: imperativ,            color: VERB_IMPERATIV_COLOR },
+        { label: 'infinitiv',  display: 'att ' + infinitiv,   color: color },
+        { label: 'presens',    display: card.back.forms[1],   color: FORM_POS_COLORS[1] },
+        { label: 'preteritum', display: card.back.forms[2],   color: FORM_POS_COLORS[2] },
+        { label: 'supinum',    display: card.back.forms[3],   color: FORM_POS_COLORS[3] },
+      ];
+    } else {
+      rowSpecs = card.back.forms.map((form, i) => ({
+        label: card.back.forms_labels?.[i] || '',
+        display: form,
+        color: FORM_POS_COLORS[i] || color,
+      }));
+    }
+
+    const formTextsForSequence = [];
+    rowSpecs.forEach(spec => {
+      const rowColor = spec.color;
       const row = document.createElement('div');
       row.className = 'form-row';
       row.style.background = rowColor + '22';
 
       const lbl = document.createElement('div');
       lbl.className = 'form-cell-label';
-      lbl.textContent = card.back.forms_labels?.[i] || '';
+      lbl.textContent = spec.label;
       lbl.style.background = rowColor;
       lbl.style.color = 'white';
 
       const val = document.createElement('div');
       val.className = 'form-cell-value';
-      val.textContent = form;
+      val.textContent = spec.display;
       val.style.color = rowColor;
 
       row.appendChild(lbl);
       row.appendChild(val);
+
+      // Per-form speak button — verbs only, for auditory memory practice
+      if (isVerb) {
+        const rowBtn = document.createElement('button');
+        rowBtn.className = 'form-speak-btn';
+        rowBtn.setAttribute('aria-label', `Hear ${spec.label}`);
+        rowBtn.style.color = rowColor;
+        rowBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>';
+        rowBtn.onclick = (e) => { e.stopPropagation(); speak(spec.display, rowBtn); };
+        row.appendChild(rowBtn);
+        formTextsForSequence.push(spec.display);
+      }
+
       grid.appendChild(row);
     });
     formsEl.appendChild(grid);
+
+    // "Play all forms" button — verbs only, speaks all 5 forms in sequence
+    if (isVerb && formTextsForSequence.length) {
+      const playAllBtn = document.createElement('button');
+      playAllBtn.className = 'play-all-forms-btn';
+      playAllBtn.setAttribute('aria-label', 'Play all verb forms in sequence');
+      playAllBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg> play all forms';
+      playAllBtn.onclick = (e) => { e.stopPropagation(); speakSequence(formTextsForSequence, playAllBtn); };
+      formsEl.appendChild(playAllBtn);
+    }
   }
 
   // Note
@@ -1879,9 +1997,10 @@ function showCard() {
     noteEl.style.display = 'none';
   }
 
-  // Speak buttons
+  // Speak buttons — verbs speak the "att"-prefixed form for the primary
   const speakWordBtn = document.getElementById('speakWord');
-  speakWordBtn.onclick = (e) => { e.stopPropagation(); speak(card.back.primary, speakWordBtn); };
+  const primarySpeakText = card.type === 'verb' ? 'att ' + (card.back.forms?.[0] || card.back.primary) : card.back.primary;
+  speakWordBtn.onclick = (e) => { e.stopPropagation(); speak(primarySpeakText, speakWordBtn); };
 
   // Example
   const exEl = document.getElementById('backExample');
